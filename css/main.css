@@ -1,0 +1,57 @@
+
+
+option[save="1"]{
+    font-weight: 900;
+    font-size: 1em;
+    color: black;
+}
+option[save="0"] {
+    font-size: 0.5em;
+    color: lightgrey;
+}
+option[save="0"]:hover{
+    font-size: 1em;
+    color: black;
+}
+.shs-overlaymenu, .shs-overlaymenu-placeholder {
+    bottom: 0;
+    display: block;
+    height: 256px;
+    left: 0;
+    position: static;
+    width: 100%;
+}
+.shs-overlaymenu {
+    background: none repeat scroll 0 0 #DEE5F2;
+    border-top: 2px solid #333333;
+    bottom: 0;
+    display: block;
+    height: 256px;
+    left: 0;
+    position: fixed;
+    width: 100%;
+}
+.shs-button {
+    background: none repeat scroll 0 0 #F9FDFF;
+    border: 1px solid #333333;
+    border-radius: 4px;
+    padding: 2px;
+    display: inline-block;
+    cursor: pointer;
+}
+.shs-button:hover {
+    border-color: #FFFFFF;
+}
+.shs-menuCollapse {
+    position: absolute;
+    right: 5px;
+    top: 5px;
+}
+.shs-update {
+    font-wieght: 900;
+}
+.shs-configList {
+    height: 212px;
+    width: 425px;
+    display: block;
+}

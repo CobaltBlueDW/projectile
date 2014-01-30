@@ -1,0 +1,12 @@
+{
+    "css":{
+        "shsMain":"file://./css/main.css"
+    },
+    "js":{
+        "shsMain":"file://./js/main.js",
+        "shsMenu":"file://./js/OverlayMenu.js"
+    },
+    "html":{
+        "shsOverlayMenu":"file://./html/menu.html"
+    }
+}
