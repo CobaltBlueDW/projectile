@@ -73,7 +73,7 @@ function main(){
     }
     
     //load hooks
-    jQuery('button.timedayAddRow').on('click', function(e){
+    jQuery(document).on('click', 'button.timedayAddRow', function(e){
         jQuery('select.projId.dropdownfixedwidth option').attr('save', 0);
         for(var item in config.projList){
             //console.log(config.projList[item]);
