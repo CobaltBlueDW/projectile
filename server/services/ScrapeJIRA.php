@@ -66,15 +66,42 @@ class ScrapeJIRA extends Service{
         require_once(dirname(__FILE__).'/../lib/simple_html_dom.php');
         $page = str_get_html($page);
         
+        $ticket = new stdClass();
+        $ticket->projectName = $projectName;
+        $ticket->ticketNumber = $ticketNumber;
+        $ticket->description = null;
+        $ticket->revenueStream = null;
+        $ticket->data = new stdClass();
+        
+        // handle fields normally
+        if (count($page->find('#summary-val')) > 0) {
+            $ticket->description = trim($page->find('#summary-val', 0)->plaintext);
+        }
+        if (count($page->find('#status-val')) > 0){
+            $ticket->status = trim($page->find('#status-val', 0)->plaintext);
+        }
+        
         //  Handle empty page
         // this selector doesn't work for some reason:  title:contains("Issue Does Not Exist")
         $emptyPage = stripos($page->find('title', 0)->plaintext, "Issue Does Not Exist") !== False;
         if ($emptyPage){
-            echo 'empty page';
+            $ticket->status = "undefined";
         }
         
-        
         //put result
+        $sql = '
+            INSERT tickets(`projectName`, `ticketNumber`, `status`, `description`, `revenueStream`, `data`)
+            VALUES ("%1$s", "%2$s", "%3$s", "%4$s", "%5$s", "%6$s")
+        ';
+        $params = array(
+            $ticket->projectName,
+            $ticket->ticketNumber,
+            $ticket->status,
+            $ticket->description,
+            $ticket->revenueStream,
+            json_encode($ticket->data)
+        );
+        $result = $this->db->query($sql, $params);
         
     }
 }

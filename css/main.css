@@ -6,7 +6,7 @@ option[save="1"]{
     color: black;
 }
 option[save="0"] {
-    font-size: 0.5em;
+    /* font-size: 0.5em; */
     color: lightgrey;
 }
 option[save="0"]:hover{

@@ -8,7 +8,7 @@ class PopulateDB extends Service {
         parent::__construct();
     }
     
-    public function grabJIRATicket($project){
+    public function grabJIRATicket($project = null){
         require_once(dirname(__FILE__).'/ScrapeJIRA.php');
         $username = 'dwipperfurth';
         $password = base64_decode('TWFkbWFuMTEh');  // resist the urge to decode this ;)
@@ -22,5 +22,5 @@ class PopulateDB extends Service {
 
 //test code
 $test = new PopulateDB();
-echo $test->grabJIRATicket('WCW');
+echo $test->grabJIRATicket();
 die();
