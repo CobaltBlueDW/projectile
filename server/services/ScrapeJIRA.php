@@ -10,11 +10,12 @@ class ScrapeJIRA extends Service{
     public $password;
     public $domain;
     public $projects = array(
-        'CSTAGE' => true,
-        'SCP' => true,
-        'AHIP' => true,
-        'ACRP' => true,
-        'WCW' => true
+        'CSTAGE' => 3000,
+        'SCP' => 1000,
+        'AHIP' => 1500,
+        'ACRP' => 1,
+        'WCW' => 400,
+        'CHEC' => 100
     );
     
     public function __construct($username, $password, $domain){
@@ -43,9 +44,13 @@ class ScrapeJIRA extends Service{
         ';
         $result = $this->db->query($sql, array($projectName));
         if (empty($result) || empty($result[0])) {
-            $ticketNumber = 1;
+            if ($this->projects[$projectName] > 1) {
+                $ticketNumber = $this->projects[$projectName];
+            } else {
+                $ticketNumber = 1;
+            }
         } else {
-            $ticketNumber = $result[0]['ticketNumber'];
+            $ticketNumber = $result[0]['ticketNumber'] + 1;
         }
         
         //grab the page
@@ -59,7 +64,7 @@ class ScrapeJIRA extends Service{
             CURLOPT_SSL_VERIFYHOST => 0
         ));
         $page = curl_exec($curl);
-        echo $page;
+        //echo $page;
         if (empty($page)) return false;
         
         //scrape the page
@@ -80,6 +85,12 @@ class ScrapeJIRA extends Service{
         if (count($page->find('#status-val')) > 0){
             $ticket->status = trim($page->find('#status-val', 0)->plaintext);
         }
+        if (count($page->find('#priority-val')) > 0){
+            $ticket->priority = trim($page->find('#priority-val', 0)->plaintext);
+        }
+        if (count($page->find('#resolution-val')) > 0){
+            $ticket->resolution = trim($page->find('#resolution-val', 0)->plaintext);
+        }
         
         //  Handle empty page
         // this selector doesn't work for some reason:  title:contains("Issue Does Not Exist")
@@ -88,21 +99,32 @@ class ScrapeJIRA extends Service{
             $ticket->status = "undefined";
         }
         
+        //  Handle redirected issues
+        if (count($page->find('#key-val')) > 0){
+            $fullkey = trim($page->find('#key-val', 0)->plaintext);
+            if ( $projectName.'-'.$ticketNumber != $fullkey) {
+                $ticket->data->redirect = $fullkey;
+            }
+        }
+        
         //put result
         $sql = '
-            INSERT tickets(`projectName`, `ticketNumber`, `status`, `description`, `revenueStream`, `data`)
-            VALUES ("%1$s", "%2$s", "%3$s", "%4$s", "%5$s", "%6$s")
+            INSERT tickets(`projectName`, `ticketNumber`, `status`, `priority`, `resolution`, `description`, `revenueStream`, `data`)
+            VALUES ("%1$s", "%2$s", "%3$s", "%4$s", "%5$s", "%6$s", "%7$s", "%8$s")
         ';
         $params = array(
             $ticket->projectName,
             $ticket->ticketNumber,
             $ticket->status,
+            $ticket->priority,
+            $ticket->resolution,
             $ticket->description,
             $ticket->revenueStream,
             json_encode($ticket->data)
         );
         $result = $this->db->query($sql, $params);
         
+        return $result;
     }
 }
 
