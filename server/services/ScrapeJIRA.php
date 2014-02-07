@@ -39,7 +39,7 @@ class ScrapeJIRA extends Service{
             SELECT tickets.ticketNumber
             FROM tickets
             WHERE tickets.projectName = "%1$s"
-            ORDER BY tickets.ticketNumber DESC
+            ORDER BY (tickets.ticketNumber * 1) DESC
             LIMIT 1
         ';
         $result = $this->db->query($sql, array($projectName));
@@ -75,6 +75,9 @@ class ScrapeJIRA extends Service{
         $ticket->projectName = $projectName;
         $ticket->ticketNumber = $ticketNumber;
         $ticket->description = null;
+        $ticket->priority = null;
+        $ticket->status = null;
+        $ticket->resolution = null;
         $ticket->revenueStream = null;
         $ticket->data = new stdClass();
         
