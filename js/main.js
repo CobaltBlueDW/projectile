@@ -77,7 +77,10 @@ function main(){
         jQuery('select.projId.dropdownfixedwidth option').attr('save', 0);
         for(var item in config.projList){
             //console.log(config.projList[item]);
-            jQuery('select.projId.dropdownfixedwidth option:contains("'+item+'")').attr('save', 1);
+            jQuery('select.projId.dropdownfixedwidth option').each(function(e){
+                $jThis = jQuery(this);
+                if ($jThis.text() == item) $jThis.attr('save', 1);
+            });
         }
         if (config.hideUnused) {
             jQuery('select.projId.dropdownfixedwidth option[save!="1"]').hide();
@@ -90,7 +93,10 @@ function main(){
                 jQuery('select.taskId.dropdownfixedwidth option').attr('save', 0);
                 for(var item in config.taskList){
                     //console.log(config.taskList[item]);
-                    jQuery('select.taskId.dropdownfixedwidth option:contains("'+item+'")').attr('save', 1);
+                    jQuery('select.taskId.dropdownfixedwidth option').each(function(e){
+                        $jThis = jQuery(this);
+                        if ($jThis.text() == item) $jThis.attr('save', 1);
+                    });
                 }
                 if (config.hideUnused) {
                     jQuery('select.taskId.dropdownfixedwidth option[save!="1"]').hide();
@@ -104,7 +110,7 @@ function main(){
             if (config.record) {
                 var curVal = jQuery('select.projId.dropdownfixedwidth option[value="'+jQuery(this).val()+'"]').text();
                 //console.log(curVal);
-                if (curVal != " " && config.projList[curVal] !== false) {
+                if (config.projList[curVal] !== false) {
                     config.projList[curVal] = true;
                     printConfig(config, '.shs-configList');
                 }
@@ -115,7 +121,7 @@ function main(){
             if (config.record) {
                 var curVal = jQuery('select.taskId.dropdownfixedwidth option[value="'+jQuery(this).val()+'"]').text();
                 //console.log(curVal);
-                if (curVal != " " && config.taskList[curVal] !== false) {
+                if (config.taskList[curVal] !== false) {
                     config.taskList[curVal] = true;
                     printConfig(config, '.shs-configList');
                 }
