@@ -31,6 +31,9 @@ option[save="0"]:hover{
     position: fixed;
     width: 100%;
 }
+.shs-overlaymenu[collapsed="true"] {
+    height: 32px;
+}
 .shs-button {
     background: none repeat scroll 0 0 #F9FDFF;
     border: 1px solid #333333;

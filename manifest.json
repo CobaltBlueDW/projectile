@@ -1,8 +1,10 @@
 {
     "css":{
+        "jqueryUIcss":"//ajax.googleapis.com/ajax/libs/jqueryui/1.10.4/themes/smoothness/jquery-ui.css",
         "shsMain":"file://./css/main.css"
     },
     "js":{
+        "jqueryUI":"//ajax.googleapis.com/ajax/libs/jqueryui/1.10.4/jquery-ui.min.js",
         "shsMain":"file://./js/main.js",
         "shsMenu":"file://./js/OverlayMenu.js"
     },

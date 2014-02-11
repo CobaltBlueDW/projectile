@@ -45,10 +45,10 @@ function main(){
     //add menu interactions
     jQuery('.shs-overlaymenu .shs-menuCollapse').on('click', function(){
         var menu = jQuery('.shs-overlaymenu');
-        if (menu.height() > 32) {
-            jQuery('.shs-overlaymenu').css('height', 32);
+        if (menu.attr('collapsed') == "true") {
+            menu.attr('collapsed', "false");
         } else {
-            jQuery('.shs-overlaymenu').css('height', 'inherit');
+            menu.attr('collapsed', "true");
         }
     });
     jQuery('.shs-overlaymenu .shs-refresh').on('click', function(){
@@ -69,7 +69,7 @@ function main(){
     
     //setup menu
     if (config.menu && config.menu.startCollapsed) {
-        jQuery('.shs-overlaymenu').css('height', 32);   //start collapsed
+        jQuery('.shs-overlaymenu').attr('collapsed', "false");
     }
     
     //load hooks
