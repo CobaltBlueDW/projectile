@@ -1,2 +1,2 @@
 
-Header add Access-Control-Allow-Origin "%{HTTP_ORIGIN}e" env=HTTP_ORIGIN
+Header set Access-Control-Allow-Origin *
