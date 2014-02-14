@@ -92,41 +92,41 @@ function main(){
     
     //load hooks
     jQuery(document).on('click', 'button.timedayAddRow', function(e){
-        jQuery('select.projId.dropdownfixedwidth option').attr('save', 0);
+        jQuery('select.projId option').attr('save', 0);
         for(var item in config.projList){
             //console.log(config.projList[item]);
-            jQuery('select.projId.dropdownfixedwidth option').each(function(e){
+            jQuery('select.projId option').each(function(e){
                 $jThis = jQuery(this);
                 if ($jThis.text() == item) $jThis.attr('save', 1);
             });
         }
         if (config.hideUnused) {
-            jQuery('select.projId.dropdownfixedwidth option[save!="1"]').hide();
+            jQuery('select.projId option[save!="1"]').hide();
         } else {
-            jQuery('select.projId.dropdownfixedwidth option[save!="1"]').show();
+            jQuery('select.projId option[save!="1"]').show();
         }
         
-        jQuery('select.projId.dropdownfixedwidth').on('change', function(e){
+        jQuery('select.projId').on('change', function(e){
             window.setTimeout(function(){
-                jQuery('select.taskId.dropdownfixedwidth option').attr('save', 0);
+                jQuery('select.taskId option').attr('save', 0);
                 for(var item in config.taskList){
                     //console.log(config.taskList[item]);
-                    jQuery('select.taskId.dropdownfixedwidth option').each(function(e){
+                    jQuery('select.taskId option').each(function(e){
                         $jThis = jQuery(this);
                         if ($jThis.text() == item) $jThis.attr('save', 1);
                     });
                 }
                 if (config.hideUnused) {
-                    jQuery('select.taskId.dropdownfixedwidth option[save!="1"]').hide();
+                    jQuery('select.taskId option[save!="1"]').hide();
                 } else {
-                    jQuery('select.taskId.dropdownfixedwidth option[save!="1"]').show();
+                    jQuery('select.taskId option[save!="1"]').show();
                 }
             }, 100);
         });
         
-        jQuery('select.projId.dropdownfixedwidth').on('blur', function(e){
+        jQuery('select.projId').on('blur', function(e){
             if (config.record) {
-                var curVal = jQuery('select.projId.dropdownfixedwidth option[value="'+jQuery(this).val()+'"]').text();
+                var curVal = jQuery('select.projId option[value="'+jQuery(this).val()+'"]').text();
                 //console.log(curVal);
                 if (config.projList[curVal] !== false) {
                     config.projList[curVal] = true;
@@ -135,9 +135,9 @@ function main(){
             }
         });
         
-        jQuery('select.taskId.dropdownfixedwidth').on('blur', function(e){
+        jQuery('select.taskId').on('blur', function(e){
             if (config.record) {
-                var curVal = jQuery('select.taskId.dropdownfixedwidth option[value="'+jQuery(this).val()+'"]').text();
+                var curVal = jQuery('select.taskId option[value="'+jQuery(this).val()+'"]').text();
                 //console.log(curVal);
                 if (config.taskList[curVal] !== false) {
                     config.taskList[curVal] = true;
@@ -149,7 +149,21 @@ function main(){
         jQuery('.timedayDescInput').autocomplete({
             delay: 300,
             minLength: 3,
-            source: tickets
+            source: tickets,
+            select: function(e, ui){
+                //console.log(ui.item.revenueStream);
+                if (ui.item.revenueStream) {
+                    var find = ui.item.revenueStream.trim();
+                    jQuery('select.projId option').each(function(){
+                        if (jQuery(this).text().trim() == find) {
+                            //console.log(jQuery(this).text());
+                            jQuery('select.projId option[selected="selected"]').attr('selected', null);
+                            jQuery(this).attr('selected', "selected").trigger('change').trigger('click');
+                            jQuery('select.projId').trigger('blur');
+                        }
+                    });
+                }
+            }
         });
     });
 }
