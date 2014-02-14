@@ -4,7 +4,7 @@ function addJQuery(callback){
     var script = document.createElement("script");
     script.setAttribute("src", "//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js");
     script.addEventListener('load', function(){
-        jQuery(document).ready(function(){
+        _jq(document).ready(function(){
             callback.call();
         });
     }, false);
@@ -28,6 +28,7 @@ var config = {
 
 function main(){
     //console.log('running main');
+    var jQuery = _jq;
     
     //load config
     var tempConfig = readCookie('shsConfg');
@@ -127,6 +128,12 @@ function main(){
                 }
             }
         });
+        
+        jQuery('.timedayDescInput').autocomplete({
+            delay: 300,
+            minLength: 3,
+            source: ['AHIP-1234','CSTAGE-4321']
+        });
     });
 }
 
@@ -163,9 +170,15 @@ function eraseCookie(name) {
 }
 
 // load jQuery and execute the main function
-addJQuery(function(){
-    jQuery('document').ready(function(){
+if (typeof(_jq) != "undefined") {
+    _jq('document').ready(function(){
         window.setTimeout(main, 1);
     });
-});
+} else {
+    addJQuery(function(){
+        _jq('document').ready(function(){
+            window.setTimeout(main, 1);
+        });
+    });
+}
 
