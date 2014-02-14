@@ -10,5 +10,8 @@
     },
     "html":{
         "shsOverlayMenu":"file://./html/menu.html"
+    },
+    "ignore":{
+        "allTickets":"file://./server/services/SpringAhead.php?func=getShortTickets"
     }
 }

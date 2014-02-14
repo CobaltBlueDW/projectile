@@ -43,6 +43,23 @@ function main(){
     jQuery('.shs-overlaymenu').html(menu);
     printConfig(config, '.shs-configList');
     
+    //load tickets
+    tickets = null;
+    jQuery.ajax({
+        type: 'GET',
+        url: 'http://localhost/projectile/server/services/SpringAhead.php?func=getShortTickets',
+        crossDomain: true,
+        context: this,
+        success: function(data, textStatus, jqXHR){
+            //console.log(jqXHR.responseJSON);
+            tickets = jqXHR.responseJSON;
+            for(var i=0; i < tickets.length; i++){
+                tickets[i].label = tickets[i].projectName+'-'+tickets[i].ticketNumber;
+                tickets[i].value = tickets[i].label+':  '+tickets[i].description;
+            }
+        }
+    });
+    
     //add menu interactions
     jQuery('.shs-overlaymenu .shs-menuCollapse').on('click', function(){
         var menu = jQuery('.shs-overlaymenu');
@@ -70,7 +87,7 @@ function main(){
     
     //setup menu
     if (config.menu && config.menu.startCollapsed) {
-        jQuery('.shs-overlaymenu').attr('collapsed', "false");
+        jQuery('.shs-overlaymenu').attr('collapsed', "true");
     }
     
     //load hooks
@@ -132,7 +149,7 @@ function main(){
         jQuery('.timedayDescInput').autocomplete({
             delay: 300,
             minLength: 3,
-            source: ['AHIP-1234','CSTAGE-4321']
+            source: tickets
         });
     });
 }

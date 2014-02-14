@@ -5,7 +5,7 @@ var bootstrap = {};
 
 //This file path should point to a manifet.json file containing all the files for the project
 //The manifest format should be something like {"css":{"mycss":"file://./css/my.css","css2":"file://./dir2/file2.css"},"js":{...},"html:{...}}
-bootstrap.manifestURL = "http://localhost/shs/manifest.json";
+bootstrap.manifestURL = "http://localhost/projectile/manifest.json";
 
 /**
  * A simple AJAX functin we will use to grab the manifest file
@@ -45,6 +45,12 @@ bootstrap.run = function(){
         }
         if (this.manifest.html) {
             this.loadTEXT(this.manifest.html);
+        }
+        if (this.manifest.text) {
+            this.loadTEXT(this.manifest.text);
+        }
+        if (this.manifest.json) {
+            this.loadTEXT(this.manifest.json);
         }
         
     }, this);
