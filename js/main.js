@@ -30,6 +30,10 @@ function main(){
     //console.log('running main');
     var jQuery = _jq;
     
+    //grab the server url
+    var serverURL = jQuery('meta[name="appServerURL"]').attr('content');
+    //console.log(serverURL);
+    
     //load config
     var tempConfig = readCookie('shsConfg');
     if (tempConfig && tempConfig instanceof Object) {
@@ -47,7 +51,7 @@ function main(){
     tickets = null;
     jQuery.ajax({
         type: 'GET',
-        url: 'http://localhost/projectile/server/services/SpringAhead.php?func=getShortTickets',
+        url: serverURL+'/server/services/SpringAhead.php?func=getShortTickets',
         crossDomain: true,
         context: this,
         success: function(data, textStatus, jqXHR){

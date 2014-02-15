@@ -6,6 +6,7 @@ var bootstrap = {};
 //This file path should point to a manifet.json file containing all the files for the project
 //The manifest format should be something like {"css":{"mycss":"file://./css/my.css","css2":"file://./dir2/file2.css"},"js":{...},"html:{...}}
 bootstrap.manifestURL = "http://localhost/projectile/manifest.json";
+bootstrap.serverURL = "http://localhost/projectile";
 
 /**
  * A simple AJAX functin we will use to grab the manifest file
@@ -52,6 +53,8 @@ bootstrap.run = function(){
         if (this.manifest.json) {
             this.loadTEXT(this.manifest.json);
         }
+        
+        this.addAppMeta();
         
     }, this);
 }
@@ -107,6 +110,18 @@ bootstrap.loadTEXT = function(textObj){
     }
 }
 
+bootstrap.addAppMeta = function(){
+    this.addMeta('appServerURL', this.serverURL);
+    this.addMeta('appManifestURL', this.manifestURL);
+}
+
+bootstrap.addMeta = function(name, value){
+    var meta = document.createElement('meta');
+    meta.setAttribute("name", name);
+    meta.setAttribute("content", value);
+    document.getElementsByTagName("head")[0].appendChild(meta);
+}
+
 /**
  * Strips the "file://" from a url if it exists, and if the url is relative
  * it returns an absolute url resolving the relativity from the location of
@@ -116,12 +131,10 @@ bootstrap.loadTEXT = function(textObj){
  * @returns string
  */
 bootstrap.resolveRelativeURL = function(url){
-    var relative = this.manifestURL.substring(0, this.manifestURL.lastIndexOf('/')+1);
-    
     if (url.substr(0,7) == "file://") url = url.substr(7);
 
     if (url.substr(0,1) == '.') {
-        url = relative + url;
+        url = this.serverURL + url;
     }
     
     return url;
