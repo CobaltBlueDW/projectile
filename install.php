@@ -1,6 +1,6 @@
 <?php
 
-require_once(dirname(__FILE__).'../db/ProjectileModel.php');
+require_once(dirname(__FILE__).'/server/db/ProjectileModel.php');
 
 $dbinfo = (object)array(
     'username' => 'projectile',

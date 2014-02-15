@@ -10,5 +10,6 @@ class ProjectileModel extends DatabaseModel{
     
     public function upgrade(){
         // create ticket table
+        $this->db->queryBatch(dirname(__FILE__).'/tickets.sql');
     }
 }

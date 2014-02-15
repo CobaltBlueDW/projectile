@@ -33,7 +33,7 @@ class Service extends Base {
     
     function attemptCall(){
         if (method_exists($this, $_GET['func'])) {
-            return call_user_method($_GET['func'], $this, $this->getAjaxObj());
+            return $this->{$_GET['func']}($this->getAjaxObj());
         }
     }
 

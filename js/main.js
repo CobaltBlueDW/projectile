@@ -161,9 +161,9 @@ function main(){
                     jQuery('select.projId option').each(function(){
                         if (jQuery(this).text().trim() == find) {
                             //console.log(jQuery(this).text());
-                            jQuery('select.projId option[selected="selected"]').attr('selected', null);
-                            jQuery(this).attr('selected', "selected").trigger('change').trigger('click');
-                            jQuery('select.projId').trigger('blur');
+                            jQuery('select.projId').val(jQuery(this).val());
+                            jQuery('select.projId').trigger('change').trigger('blur');
+                            projectChanged(jQuery('select.projId')[0]); // tell SpringAhead code about the update
                         }
                     });
                 }
