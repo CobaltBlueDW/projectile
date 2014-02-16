@@ -47,23 +47,6 @@ function main(){
     jQuery('.shs-overlaymenu').html(menu);
     printConfig(config, '.shs-configList');
     
-    //load tickets
-    tickets = null;
-    jQuery.ajax({
-        type: 'GET',
-        url: serverURL+'/server/services/SpringAhead.php?func=getShortTickets',
-        crossDomain: true,
-        context: this,
-        success: function(data, textStatus, jqXHR){
-            //console.log(jqXHR.responseJSON);
-            tickets = jqXHR.responseJSON;
-            for(var i=0; i < tickets.length; i++){
-                tickets[i].label = tickets[i].projectName+'-'+tickets[i].ticketNumber;
-                tickets[i].value = tickets[i].label+':  '+tickets[i].description;
-            }
-        }
-    });
-    
     //add menu interactions
     jQuery('.shs-overlaymenu .shs-menuCollapse').on('click', function(){
         var menu = jQuery('.shs-overlaymenu');
@@ -153,7 +136,33 @@ function main(){
         jQuery('.timedayDescInput').autocomplete({
             delay: 300,
             minLength: 3,
-            source: tickets,
+            source: function(request, response){
+                //prepare request object
+                request = request.term.trim();
+                var requestObj = {
+                    projectName: request.substr(0, request.indexOf('-')),
+                    ticketNumber: parseInt(request.substring(request.indexOf('-')+1, request.indexOf(' ')))
+                }
+                
+                //send query
+                jQuery.ajax({
+                    url: serverURL+'/server/services/SpringAhead.php?func=getShortTickets',
+                    method: 'POST',
+                    crossdomain: true,
+                    processData: false,
+                    data: JSON.stringify(requestObj),
+                    context: this,
+                    success: function(data, textStatus, jqXHR){
+                        //console.log(jqXHR.responseJSON);
+                        var tickets = jqXHR.responseJSON;
+                        for(var i=0; i < tickets.length; i++){
+                            tickets[i].label = tickets[i].projectName+'-'+tickets[i].ticketNumber;
+                            tickets[i].value = tickets[i].label+':  '+tickets[i].description;
+                        }
+                        response(tickets);
+                    }
+                });
+            },
             select: function(e, ui){
                 //console.log(ui.item.revenueStream);
                 if (ui.item.revenueStream) {

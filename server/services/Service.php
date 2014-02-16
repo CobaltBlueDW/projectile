@@ -14,8 +14,9 @@ class Service extends Base {
      * @return mixed
      */
     function getAjaxObj() {
-        if (isset($GLOBALS['HTTP_RAW_POST_DATA'])) {
-            return json_decode($GLOBALS['HTTP_RAW_POST_DATA']);
+        $data = file_get_contents("php://input");
+        if (isset($data)) {
+            return json_decode($data);
         } else {
             return null;
         }
