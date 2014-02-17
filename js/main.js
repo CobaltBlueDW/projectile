@@ -95,6 +95,7 @@ function main(){
         
         jQuery('select.projId').on('change', function(e){
             window.setTimeout(function(){
+                //update save attributes
                 jQuery('select.taskId option').attr('save', 0);
                 for(var item in config.taskList){
                     //console.log(config.taskList[item]);
@@ -103,6 +104,8 @@ function main(){
                         if ($jThis.text() == item) $jThis.attr('save', 1);
                     });
                 }
+                
+                //handle hide action
                 if (config.hideUnused) {
                     jQuery('select.taskId option[save!="1"]').hide();
                 } else {
@@ -176,12 +179,37 @@ function main(){
                         if (jQuery(this).text().trim() == find) {
                             //console.log(jQuery(this).text());
                             jQuery('select.projId').val(jQuery(this).val());
-                            jQuery('select.projId').trigger('change').trigger('blur');
                             projectChanged(jQuery('select.projId')[0]); // tell SpringAhead code about the update
+                            jQuery('select.projId').trigger('change').trigger('blur');
                         }
                     });
                 }
             }
+        });
+        
+        jQuery('button.save').on('click', function(e, ui){
+            //grab submit data
+            var submitData = {
+                projID: jQuery('select.projId option[value="'+jQuery('select.projId').val()+'"]').text(),
+                taskID: jQuery('select.taskId option[value="'+jQuery('select.taskId').val()+'"]').text(),
+                hours: jQuery('input.timehours_input').val(),
+                date: jQuery('input.date').val(),
+                type: jQuery('select.timeTypeId option[value="'+jQuery('select.timeTypeId').val()+'"]').text(),
+                description: jQuery('input.timedayDescInput').val()
+            };
+            
+            //send submit data
+            jQuery.ajax({
+                url: serverURL+'/server/services/SpringAhead.php?func=submitTimeLog',
+                method: 'POST',
+                crossdomain: true,
+                processData: false,
+                data: JSON.stringify(submitData),
+                context: this,
+                success: function(data, textStatus, jqXHR){
+                    console.log(jqXHR.responseJSON);
+                }
+            });
         });
     });
 }

@@ -48,6 +48,11 @@ class SpringAhead extends Service {
         return $result;
     }
     
+    public function submitTimeLog($queryObj = null){
+        //TODO: stuff
+        return true;
+    }
+    
 }
 
 //serve code
