@@ -139,9 +139,14 @@ function main(){
             source: function(request, response){
                 //prepare request object
                 request = request.term.trim();
+                pound = request.indexOf('#');
+                if (pound == -1) return response(null);
+                hyphen = request.indexOf('-', pound);
+                if (hyphen == -1) return response(null);
+                
                 var requestObj = {
-                    projectName: request.substr(0, request.indexOf('-')),
-                    ticketNumber: parseInt(request.substring(request.indexOf('-')+1, request.indexOf(' ')))
+                    projectName: request.substring(pound+1, hyphen),
+                    ticketNumber: parseInt(request.substr(hyphen+1, 6))
                 }
                 
                 //send query

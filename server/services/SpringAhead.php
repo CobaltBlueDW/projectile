@@ -31,7 +31,21 @@ class SpringAhead extends Service {
             LIMIT 25
         ";
         
-        return $this->db->query($sql, $params);
+        $result = $this->db->query($sql, $params);
+        
+        // if a full/semi-full ticket is specified and no results are returned
+        // make an attempt to scrape the JIRA page for it
+        if (empty($result) && !empty($queryObj->projectName) && !empty($queryObj->ticketNumber)){
+            global $config;
+            require_once(dirname(__FILE__).'/ScrapeJIRA.php');
+            $scraper = new ScrapeJIRA($config->JIRA->username, $config->JIRA->password, $config->JIRA->domain);
+            $result = $scraper->scrapeNewTicketPage($queryObj->projectName, $queryObj->ticketNumber);
+            if ($result) {
+                return $this->db->query($sql, $params);
+            }
+        }
+        
+        return $result;
     }
     
 }

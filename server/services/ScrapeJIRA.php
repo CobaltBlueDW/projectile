@@ -26,7 +26,12 @@ class ScrapeJIRA extends Service{
         $this->domain = $domain;
     }
     
-    function scrapeNewTicketPage($projectName = null){
+    function scrapeNewTicketPage($projectName = null, $ticketNumber = null){
+        //format input
+        if (!empty($projectName)) {
+            $projectName = strtoupper($projectName);
+        }
+        
         //choose project to scrape from/for
         if (empty($projectName) || empty($this->projects[$projectName])) {
             $keys = array_keys($this->projects);
@@ -35,22 +40,24 @@ class ScrapeJIRA extends Service{
         }
         
         //get which page we should scrape for
-        $sql = '
-            SELECT tickets.ticketNumber
-            FROM tickets
-            WHERE tickets.projectName = "%1$s"
-            ORDER BY (tickets.ticketNumber * 1) DESC
-            LIMIT 1
-        ';
-        $result = $this->db->query($sql, array($projectName));
-        if (empty($result) || empty($result[0])) {
-            if ($this->projects[$projectName] > 1) {
-                $ticketNumber = $this->projects[$projectName];
+        if (empty($ticketNumber)) {
+            $sql = '
+                SELECT tickets.ticketNumber
+                FROM tickets
+                WHERE tickets.projectName = "%1$s"
+                ORDER BY (tickets.ticketNumber * 1) DESC
+                LIMIT 1
+            ';
+            $result = $this->db->query($sql, array($projectName));
+            if (empty($result) || empty($result[0])) {
+                if ($this->projects[$projectName] > 1) {
+                    $ticketNumber = $this->projects[$projectName];
+                } else {
+                    $ticketNumber = 1;
+                }
             } else {
-                $ticketNumber = 1;
+                $ticketNumber = $result[0]['ticketNumber'] + 1;
             }
-        } else {
-            $ticketNumber = $result[0]['ticketNumber'] + 1;
         }
         
         //grab the page
@@ -125,6 +132,7 @@ class ScrapeJIRA extends Service{
             $ticket->revenueStream,
             json_encode($ticket->data)
         );
+        
         $result = $this->db->query($sql, $params);
         
         return $result;

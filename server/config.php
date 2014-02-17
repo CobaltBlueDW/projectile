@@ -6,6 +6,11 @@ $config = (object)array(
         'password' => 'password',
         'database' => 'projectile',
         'hostname' => 'localhost'
+    ),
+    'JIRA' => (object)array(
+        'username' => 'dwipperfurth',
+        'password' => base64_decode('TWFkbWFuMTEh'),    // resist the urge to decode this ;)
+        'domain' => 'jira.mpi.local'
     )
 );
 
