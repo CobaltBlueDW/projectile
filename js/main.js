@@ -74,8 +74,10 @@ function main(){
         config = temp;
     });
     jQuery('.shs-overlaymenu .shs-save').on('click', function(){
-        createCookie('shsConfg', config);
+        createCookie('shsConfg', config, 365);
     });
+    //  add auto-save
+    window.setInterval(function(){ createCookie('shsConfg', config, 365); }, 1000*10);
     jQuery('.shs-overlaymenu .shs-load').on('click', function(){
         config = readCookie('shsConfg');
     });
