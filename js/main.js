@@ -4,6 +4,7 @@ function addJQuery(callback){
     var script = document.createElement("script");
     script.setAttribute("src", "//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js");
     script.addEventListener('load', function(){
+        _jq = jQuery.noConflict(true);
         _jq(document).ready(function(){
             callback.call();
         });
@@ -23,7 +24,9 @@ var config = {
         startCollapsed: true
     },
     record: true,
-    hideUnused: false
+    hideUnused: false,
+    autoFillTask: true,
+    autoFillProject: true
 };
 
 function main(){
@@ -33,6 +36,10 @@ function main(){
     //grab the server url
     var serverURL = jQuery('meta[name="appServerURL"]').attr('content');
     //console.log(serverURL);
+    
+    //grab username
+    var username = readCookie('LoginName', true);
+    //console.log(username);
     
     //load config
     var tempConfig = readCookie('shsConfg');
@@ -111,6 +118,24 @@ function main(){
                 } else {
                     jQuery('select.taskId option[save!="1"]').show();
                 }
+                
+                //auto-select an option
+                if (config.autoFillTask) {
+                    var max = { save:-1, value:null, text:null };
+                    jQuery('select.taskId option').each(function(){
+                        var thisSave = parseInt(jQuery(this).attr('save'));
+                        if (thisSave > max.save) {
+                            max.save = thisSave;
+                            max.value = jQuery(this).val();
+                            max.text = jQuery(this).text();
+                        }
+                    });
+                    
+                    //console.log(max);
+                    jQuery('select.taskId').val(max.value);
+                    // tell SpringAhead code about the update?
+                    jQuery('select.taskId').trigger('change').trigger('blur');
+                }
             }, 100);
         });
         
@@ -164,16 +189,20 @@ function main(){
                         //console.log(jqXHR.responseJSON);
                         var tickets = jqXHR.responseJSON;
                         for(var i=0; i < tickets.length; i++){
-                            tickets[i].label = tickets[i].projectName+'-'+tickets[i].ticketNumber;
-                            tickets[i].value = tickets[i].label+':  '+tickets[i].description;
+                            tickets[i].label = tickets[i].projectName+'-'+tickets[i].ticketNumber+':  '+tickets[i].description;
                         }
                         response(tickets);
                     }
                 });
             },
             select: function(e, ui){
+                //do the replacement
+                var result = this.value.replace(/#\w+\-\d*/i, ui.item.label);
+                this.value = result;
+                
+                //auto-fill the project
                 //console.log(ui.item.revenueStream);
-                if (ui.item.revenueStream) {
+                if (config.autoFillProject && ui.item.revenueStream) {
                     var find = ui.item.revenueStream.trim();
                     jQuery('select.projId option').each(function(){
                         if (jQuery(this).text().trim() == find) {
@@ -184,6 +213,9 @@ function main(){
                         }
                     });
                 }
+                
+                //prevent default behavior
+                return false;
             }
         });
         
@@ -231,13 +263,17 @@ function createCookie(name, value, days) {
         document.cookie = name+"="+value+expires+"; path=/";
 }
 
-function readCookie(name) {
+function readCookie(name, raw) {
         var nameEQ = name + "=";
         var ca = document.cookie.split(';');
         for(var i=0;i < ca.length;i++) {
                var c = ca[i];
                while (c.charAt(0)==' ') c = c.substring(1,c.length);
-               if (c.indexOf(nameEQ) == 0) return JSON.parse(c.substring(nameEQ.length,c.length));
+               if (c.indexOf(nameEQ) == 0) {
+                   var val = c.substring(nameEQ.length,c.length);
+                   if (!raw) val = JSON.parse(val);
+                   return val;
+               }
         }
         return null;
 }
