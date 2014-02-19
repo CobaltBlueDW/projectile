@@ -135,7 +135,7 @@ bootstrap.resolveRelativeURL = function(url){
     if (url.substr(0,7) == "file://") url = url.substr(7);
 
     if (url.substr(0,1) == '.') {
-        url = this.serverURL + url;
+        url = this.serverURL +'/'+ url;
     }
     
     return url;

@@ -1,15 +1,16 @@
 
 
 function addJQuery(callback){
+    //find server url old-school way
+    var serverURL = document.getElementsByName("appServerURL")[0].getAttribute("content"); 
     var script = document.createElement("script");
-    script.setAttribute("src", "//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js");
+    script.setAttribute("src", serverURL+"/js/jq-1.11.0_jqui-1.10.4_min.js");
     script.addEventListener('load', function(){
-        _jq = jQuery.noConflict(true);
         _jq(document).ready(function(){
             callback.call();
         });
     }, false);
-    document.body.appendChild(script);
+    document.head.appendChild(script);
 }
 
 var config = {
@@ -142,6 +143,12 @@ function main(){
         jQuery('select.projId').on('blur', function(e){
             if (config.record) {
                 var curVal = jQuery('select.projId option[value="'+jQuery(this).val()+'"]').text();
+                
+                // quit if it is the empty selection
+                if (curVal.trim() == "") {
+                    return;
+                }
+                
                 //console.log(curVal);
                 if (config.projList[curVal] !== false) {
                     config.projList[curVal] = true;
@@ -153,6 +160,12 @@ function main(){
         jQuery('select.taskId').on('blur', function(e){
             if (config.record) {
                 var curVal = jQuery('select.taskId option[value="'+jQuery(this).val()+'"]').text();
+                
+                // quit if it is the empty selection
+                if (curVal.trim() == "") {
+                    return;
+                }
+                
                 //console.log(curVal);
                 if (config.taskList[curVal] !== false) {
                     config.taskList[curVal] = true;
@@ -162,7 +175,7 @@ function main(){
         });
         
         jQuery('.timedayDescInput').autocomplete({
-            delay: 300,
+            delay: 500,
             minLength: 3,
             source: function(request, response){
                 //prepare request object

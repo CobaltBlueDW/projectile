@@ -13,6 +13,8 @@ option[save="0"]:hover{
     font-size: 1em;
     color: black;
 }
+
+/* overlay */
 .shs-overlaymenu, .shs-overlaymenu-placeholder {
     bottom: 0;
     display: block;
@@ -22,8 +24,6 @@ option[save="0"]:hover{
     width: 100%;
 }
 .shs-overlaymenu {
-    background: none repeat scroll 0 0 #DEE5F2;
-    border-top: 2px solid #333333;
     bottom: 0;
     display: block;
     height: 256px;
@@ -32,8 +32,40 @@ option[save="0"]:hover{
     width: 100%;
 }
 .shs-overlaymenu[collapsed="true"] {
-    height: 32px;
+    height: 24px;
 }
+
+/* tabs */
+.shs-tabs {
+    clear: both;
+    display: block;
+    margin-bottom: -2px;
+    padding-left: 4px;
+}
+.shs-tab {
+    display: inline-block;
+    background: none repeat scroll 0 0 #DEE5F2;
+    border: 2px solid #333333;
+    border-bottom: 1px solid #AAAAAA;
+    border-radius: 4px 4px 0px 0px;
+    padding: 4px 6px;
+    cursor: pointer;
+}
+.shs-tab.shs-active {
+    border-bottom: none;
+}
+.shs-tab:hover {
+    border-top-color: #FFFFFF;
+    border-right-color: #FFFFFF;
+    border-left-color: #FFFFFF;
+}
+.shs-tabzone { 
+    background: none repeat scroll 0 0 #DEE5F2;
+    border: 2px solid #333333;
+    display: block;
+}
+
+/* buttons */
 .shs-button {
     background: none repeat scroll 0 0 #F9FDFF;
     border: 1px solid #333333;
@@ -45,10 +77,11 @@ option[save="0"]:hover{
 .shs-button:hover {
     border-color: #FFFFFF;
 }
+
+/* specifics */
 .shs-menuCollapse {
-    position: absolute;
-    right: 5px;
-    top: 5px;
+    float: right;
+    border-bottom: none;
 }
 .shs-update {
     font-wieght: 900;
