@@ -24,6 +24,16 @@ var config = {
     menu: {
         startCollapsed: true
     },
+    autocomplete: {
+        list: {
+            email: {
+                label: "email",
+                value: "email",
+                revenueStream: "   Admin Activities",
+                task: "Emails"
+            }
+        }
+    },
     record: true,
     hideUnused: false,
     autoFillTask: true,
@@ -184,35 +194,53 @@ function main(){
                 request = request.term.trim();
                 pound = request.indexOf('#');
                 if (pound == -1) return response(null);
-                hyphen = request.indexOf('-', pound);
-                if (hyphen == -1) return response(null);
                 
-                var requestObj = {
-                    projectName: request.substring(pound+1, hyphen),
-                    ticketNumber: parseInt(request.substr(hyphen+1, 6))
+                hyphen = request.indexOf('-', pound);
+                if (hyphen != -1){
+                    var requestObj = {
+                        projectName: request.substring(pound+1, hyphen),
+                        ticketNumber: parseInt(request.substr(hyphen+1, 6))
+                    }
+
+                    //send query
+                    jQuery.ajax({
+                        url: serverURL+'/server/services/SpringAhead.php?func=getShortTickets',
+                        method: 'POST',
+                        crossdomain: true,
+                        processData: false,
+                        data: JSON.stringify(requestObj),
+                        context: this,
+                        success: function(data, textStatus, jqXHR){
+                            //console.log(jqXHR.responseJSON);
+                            var tickets = jqXHR.responseJSON;
+                            for(var i=0; i < tickets.length; i++){
+                                tickets[i].label = tickets[i].projectName+'-'+tickets[i].ticketNumber+':  '+tickets[i].description;
+                                tickets[i].value = tickets[i].label;
+                            }
+                            response(tickets);
+                        }
+                    });
+                    
+                    return; 
+                } else if (config.autocomplete && config.autocomplete.list) {
+                    var request = request.match(/#\w+/);
+                    if (!request) return response(null);
+                    request = request[0].substring(1);
+                    
+                    var results = [];
+                    var list = config.autocomplete.list;
+                    for(var key in list){
+                        //console.log(request+' '+key);
+                        if (key.indexOf(request) != -1) results.push(list[key]);
+                    }
+                    return response(results);
                 }
                 
-                //send query
-                jQuery.ajax({
-                    url: serverURL+'/server/services/SpringAhead.php?func=getShortTickets',
-                    method: 'POST',
-                    crossdomain: true,
-                    processData: false,
-                    data: JSON.stringify(requestObj),
-                    context: this,
-                    success: function(data, textStatus, jqXHR){
-                        //console.log(jqXHR.responseJSON);
-                        var tickets = jqXHR.responseJSON;
-                        for(var i=0; i < tickets.length; i++){
-                            tickets[i].label = tickets[i].projectName+'-'+tickets[i].ticketNumber+':  '+tickets[i].description;
-                        }
-                        response(tickets);
-                    }
-                });
+                 return response(null);
             },
             select: function(e, ui){
                 //do the replacement
-                var result = this.value.replace(/#\w+\-\d*/i, ui.item.label);
+                var result = this.value.replace(/#\w+\-?\d*/i, ui.item.value);
                 this.value = result;
                 
                 //auto-fill the project
