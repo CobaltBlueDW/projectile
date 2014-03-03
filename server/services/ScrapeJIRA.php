@@ -110,9 +110,9 @@ class ScrapeJIRA extends Service{
         }
         
         //  Handle redirected issues
-        if (count($page->find('#key-val')) > 0){
+        if(count($page->find('#key-val')) > 0){
             $fullkey = trim($page->find('#key-val', 0)->plaintext);
-            if ( $projectName.'-'.$ticketNumber != $fullkey) {
+            if($projectName.'-'.$ticketNumber != $fullkey){
                 $ticket->data->redirect = $fullkey;
             }
         }

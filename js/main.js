@@ -115,21 +115,23 @@ function main(){
         
         jQuery('select.projId').on('change', function(e){
             window.setTimeout(function(){
+                console.log('updating task choice');
+                
                 //update save attributes
-                jQuery('select.taskId option').attr('save', 0);
+                jQuery('select.taskId option:not([save])').attr('save', 0);
                 for(var item in config.taskList){
                     //console.log(config.taskList[item]);
                     jQuery('select.taskId option').each(function(e){
                         $jThis = jQuery(this);
-                        if ($jThis.text() == item) $jThis.attr('save', 1);
+                        if ($jThis.text() == item) $jThis.attr('save', parseInt($jThis.attr('save'))+1);
                     });
                 }
                 
                 //handle hide action
                 if (config.hideUnused) {
-                    jQuery('select.taskId option[save!="1"]').hide();
+                    jQuery('select.taskId option[save="0"]').hide();
                 } else {
-                    jQuery('select.taskId option[save!="1"]').show();
+                    jQuery('select.taskId option[save="0"]').show();
                 }
                 
                 //auto-select an option
@@ -252,9 +254,28 @@ function main(){
                             //console.log(jQuery(this).text());
                             jQuery('select.projId').val(jQuery(this).val());
                             projectChanged(jQuery('select.projId')[0]); // tell SpringAhead code about the update
+                            
+                            //update task priority
+                            if (ui.item.task) {
+                                var task = ui.item.task.trim();
+                                jQuery('select.taskId option').each(function(){
+                                    console.log(jQuery(this).text().trim());
+                                    if (jQuery(this).text().trim() == task) {
+                                        var save = parseInt(jQuery(this).attr('save'));
+                                        if (!save) save = 0;
+                                        jQuery(this).attr('save', save+10);
+                                    }
+                                });
+                            }
+                            
                             jQuery('select.projId').trigger('change').trigger('blur');
                         }
                     });
+                }
+                
+                //update hours
+                if (ui.item.hours) {
+                    jQuery('input.timehours_input').val(ui.item.hours);
                 }
                 
                 //prevent default behavior
