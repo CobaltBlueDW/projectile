@@ -58,6 +58,22 @@ function main(){
         config = tempConfig;
     }
     
+    jQuery.ajax({
+        url: serverURL+'/server/services/SpringAhead.php?func=getUserPreferences',
+        method: 'POST',
+        crossdomain: true,
+        processData: false,
+        data: JSON.stringify({username: username}),
+        context: this,
+        success: function(data, textStatus, jqXHR){
+            //todo: signify completion
+            if (jqXHR.responseJSON) {
+                config = jqXHR.responseJSON;
+                createCookie('shsConfg', config);
+            }
+        }
+    });
+    
     //load menu
     jQuery('body').append("<div class='shs-overlaymenu'></div>");
     jQuery('body').append("<div class='shs-overlaymenu-placeholder'></div>");
@@ -84,12 +100,73 @@ function main(){
         config = temp;
     });
     jQuery('.shs-overlaymenu .shs-save').on('click', function(){
-        createCookie('shsConfg', config, 365);
+        createCookie('shsConfg', config);
     });
     //  add auto-save
-    window.setInterval(function(){ createCookie('shsConfg', config, 365); }, 1000*10);
+    window.setInterval(function(){ createCookie('shsConfg', config); }, 1000*10);
     jQuery('.shs-overlaymenu .shs-load').on('click', function(){
         config = readCookie('shsConfg');
+        
+    });
+    
+    window.setInterval(function(){ 
+        jQuery.ajax({
+            url: serverURL+'/server/services/SpringAhead.php?func=setUserPreferences',
+            method: 'POST',
+            crossdomain: true,
+            processData: false,
+            data: JSON.stringify({username:username, preferences:config}),
+            context: this,
+            success: function(data, textStatus, jqXHR){
+                //todo: signify completion
+            }
+        }); 
+    }, 1000*60);
+    
+    jQuery('#submitall').on('click', function(){
+        jQuery.ajax({
+            url: serverURL+'/server/services/SpringAhead.php?func=setUserPreferences',
+            method: 'POST',
+            crossdomain: true,
+            processData: false,
+            data: JSON.stringify({username:username, preferences:config}),
+            context: this,
+            success: function(data, textStatus, jqXHR){
+                //todo: signify completion
+            }
+        });
+    });
+    
+    jQuery('.shs-overlaymenu .shs-remoteSave').on('click', function(){
+        jQuery.ajax({
+            url: serverURL+'/server/services/SpringAhead.php?func=setUserPreferences',
+            method: 'POST',
+            crossdomain: true,
+            processData: false,
+            data: JSON.stringify({username:username, preferences:config}),
+            context: this,
+            success: function(data, textStatus, jqXHR){
+                //todo: signify completion
+            }
+        });
+    });
+    
+    jQuery('.shs-overlaymenu .shs-remoteLoad').on('click', function(){
+        jQuery.ajax({
+            url: serverURL+'/server/services/SpringAhead.php?func=getUserPreferences',
+            method: 'POST',
+            crossdomain: true,
+            processData: false,
+            data: JSON.stringify({username: username}),
+            context: this,
+            success: function(data, textStatus, jqXHR){
+                //todo: signify completion
+                if (jqXHR.responseJSON) {
+                    config = jqXHR.responseJSON;
+                    createCookie('shsConfg', config);
+                }
+            }
+        });
     });
     
     //setup menu

@@ -53,6 +53,56 @@ class SpringAhead extends Service {
         return true;
     }
     
+    public function getUserPreferences($queryObj = null){
+        if(empty($queryObj->username)) return false;
+        
+        $sql = '
+            select *
+            from users
+            where username = "%1$s"
+        ';
+        $params = array($queryObj->username);
+        $user = $this->db->query($sql, $params);
+        if(empty($user)) return false;
+        
+        return json_decode($user[0]['preferences']);
+    }
+    
+    public function setUserPreferences($queryObj = null){
+        if(empty($queryObj->username)) return false;
+        if(empty($queryObj->preferences)) return false;
+        
+        //check if the user already exists
+        $sql = '
+            select *
+            from users
+            where username = "%1$s"
+        ';
+        $params = array($queryObj->username);
+        $user = $this->db->query($sql, $params);
+        
+        //insert or update
+        $result = false;
+        if(empty($user)){
+            $sql = '
+                insert users(`username`,`preferences`)
+                values ("%1$s", "2$s")
+            ';
+            $params = array($queryObj->username, json_encode($queryObj->preferences));
+            $result = $this->db->query($sql, $params);
+        }else{
+            $sql = '
+                update users
+                set preferences = "%2$s"
+                where username = "%1$s"
+            ';
+            $params = array($queryObj->username, json_encode($queryObj->preferences));
+            $result = $this->db->query($sql, $params);
+        }
+        
+        return $result;
+    }
+    
 }
 
 //serve code
