@@ -49,6 +49,43 @@ class SpringAhead extends Service {
     }
     
     public function submitTimeLog($queryObj = null){
+        
+        // attempt to grab an associated ticket
+        $projectName = null;
+        $ticketNumber = null;
+        if (!empty($queryObj->description)) {
+            preg_match('/(\w{3,}-\d+)[\: ]/i', $queryObj->description, $matches);
+            if (!empty($matches[1])) {
+                list($projectName, $ticketNumber) = explode('-', strtoupper($matches[1]));
+            }
+        }
+        
+        $ticket = null;
+        if (!empty($projectName) && !empty($ticketNumber)) {
+            $sql = '
+                SELECT * 
+                FROM tickets
+                WHERE projectName = "%1$s" AND ticketNumber = "%2$s"
+            ';
+            $params = array($projectName, $ticketNumber);
+            $result = $this->db->query($sql, $params);
+            if (!empty($result[0])) {
+                $ticket = $result[0];
+            }
+        }
+        
+        // update revenueStream field
+        if (!empty($ticket) && !empty($queryObj->projID)) {
+            $ticket['revenueStream'] = $queryObj->projID;
+            $sql = '
+                UPDATE tickets 
+                SET revenueStream = "%1$s"
+                WHERE ticketID = %2$d
+            ';
+            $params = array($ticket['revenueStream'], $ticket['ticketID']);
+            $result = $this->db->query($sql, $params);
+        }
+        
         //TODO: stuff
         return true;
     }

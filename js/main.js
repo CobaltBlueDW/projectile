@@ -53,10 +53,10 @@ function main(){
     //console.log(username);
     
     //load config
-    var tempConfig = readCookie('shsConfg');
-    if (tempConfig && tempConfig instanceof Object) {
-        config = tempConfig;
-    }
+    //var tempConfig = readCookie('shsConfg');
+    //if (tempConfig && tempConfig instanceof Object) {
+    //    config = tempConfig;
+    //}
     
     jQuery.ajax({
         url: serverURL+'/server/services/SpringAhead.php?func=getUserPreferences',
@@ -69,7 +69,7 @@ function main(){
             //todo: signify completion
             if (jqXHR.responseJSON) {
                 config = jqXHR.responseJSON;
-                createCookie('shsConfg', config);
+                //createCookie('shsConfg', config);
             }
         }
     });
@@ -99,15 +99,14 @@ function main(){
         //console.log(temp);
         config = temp;
     });
-    jQuery('.shs-overlaymenu .shs-save').on('click', function(){
-        createCookie('shsConfg', config);
-    });
+    //jQuery('.shs-overlaymenu .shs-save').on('click', function(){
+    //    createCookie('shsConfg', config);
+    //});
     //  add auto-save
-    window.setInterval(function(){ createCookie('shsConfg', config); }, 1000*10);
-    jQuery('.shs-overlaymenu .shs-load').on('click', function(){
-        config = readCookie('shsConfg');
-        
-    });
+    //window.setInterval(function(){ createCookie('shsConfg', config); }, 1000*10);
+    //jQuery('.shs-overlaymenu .shs-load').on('click', function(){
+    //    config = readCookie('shsConfg');   
+    //});
     
     window.setInterval(function(){ 
         jQuery.ajax({
@@ -163,7 +162,7 @@ function main(){
                 //todo: signify completion
                 if (jqXHR.responseJSON) {
                     config = jqXHR.responseJSON;
-                    createCookie('shsConfg', config);
+                    //createCookie('shsConfg', config);
                 }
             }
         });
@@ -405,18 +404,22 @@ function createCookie(name, value, days) {
 }
 
 function readCookie(name, raw) {
-        var nameEQ = name + "=";
-        var ca = document.cookie.split(';');
-        for(var i=0;i < ca.length;i++) {
-               var c = ca[i];
-               while (c.charAt(0)==' ') c = c.substring(1,c.length);
-               if (c.indexOf(nameEQ) == 0) {
-                   var val = c.substring(nameEQ.length,c.length);
-                   if (!raw) val = JSON.parse(val);
-                   return val;
-               }
+    var nameEQ = name + "=";
+    var ca = document.cookie.split(';');
+    for(var i=0;i < ca.length;i++) {
+        var c = ca[i];
+        while (c.charAt(0)==' ') c = c.substring(1,c.length);
+        if (c.indexOf(nameEQ) == 0) {
+            var val = c.substring(nameEQ.length,c.length);
+            try {
+                if (!raw) val = JSON.parse(val);
+            } catch(e) {
+                //do nothing
+            }
+            return val;
         }
-        return null;
+    }
+    return null;
 }
 
 function eraseCookie(name) {
