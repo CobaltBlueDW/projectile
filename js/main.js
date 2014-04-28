@@ -70,6 +70,7 @@ function main(){
             if (jqXHR.responseJSON) {
                 config = jqXHR.responseJSON;
                 //createCookie('shsConfg', config);
+                printConfig(config, '.shs-configList');
             }
         }
     });
@@ -85,11 +86,23 @@ function main(){
     jQuery('.shs-overlaymenu .shs-menuCollapse').on('click', function(){
         var menu = jQuery('.shs-overlaymenu');
         if (menu.attr('collapsed') == "true") {
+            jQuery('.shs-overlaymenu .shs-tabzone > .shs-tabcontent').hide();
+            jQuery('.shs-overlaymenu .shs-tabzone > .'+jQuery('.shs-overlaymenu .shs-tab.shs-active').attr('tab')).show();
             menu.attr('collapsed', "false");
         } else {
             menu.attr('collapsed', "true");
         }
     });
+    jQuery('.shs-overlaymenu .shs-tab').on('click', function(){
+        $this = jQuery(this);
+        if (!$this.attr('tab')) return;
+        jQuery('.shs-overlaymenu .shs-tabs > .shs-tab[tab]').removeClass('shs-active');
+        $this.addClass('shs-active');
+        jQuery('.shs-overlaymenu .shs-tabzone > .shs-tabcontent').hide();
+        jQuery('.shs-overlaymenu .shs-tabzone > .'+$this.attr('tab')).show();
+    });
+    
+    //add config tab interactions
     jQuery('.shs-overlaymenu .shs-refresh').on('click', function(){
         //console.log(config);
         printConfig(config, '.shs-configList');

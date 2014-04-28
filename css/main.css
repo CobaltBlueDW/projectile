@@ -63,6 +63,7 @@ option[save="0"]:hover{
     background: none repeat scroll 0 0 #DEE5F2;
     border: 2px solid #333333;
     display: block;
+    min-height: 250px;
 }
 
 /* buttons */
