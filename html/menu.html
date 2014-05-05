@@ -1,18 +1,44 @@
 <div class='shs-tabs'>
-    <div class='shs-tab shs-hashtagtab shs-active' tab='shs-hashtagtab'>#tags</div>
+    <div class='shs-tab shs-ical shs-active' tab='shs-icaltab'>iCal</div>
+    <div class='shs-tab shs-hashtagtab' tab='shs-hashtagtab'>#tags</div>
     <div class='shs-tab shs-configtab' tab='shs-configtab'>Config</div>
     <div class='shs-menuCollapse shs-tab'>_</div>
 </div>
 <div class='shs-tabzone'>
-    <div class='shs-tabcontent shs-hashtagtab'>
-        <div class='shs-col1'>
+    <div class='shs-tabcontent shs-icaltab'>
+        <div class='shs-col shs-col1'>
             <div style='margin:6px'>
-                temp content
+                <h4 style='margin:0 4px 0;display:inline-block;'>Import: </h4>
+                <input type='file' class='shs-uploadfile' />
+                <div class='shs-upload shs-button'>Upload</div>
+                <div class='shs-import shs-button'>Import</div>
+            </div>
+            <textarea class='shs-icalContents'></textarea>
+        </div>
+    </div>
+    <div class='shs-tabcontent shs-hashtagtab'>
+        <div class='shs-col shs-col1'>
+            <div style='margin:6px'>
+                <h4 style='margin:0 4px 0;display:inline-block;'>Tag List:  </h4>
+                <div class='shs-new shs-button'>New Tag</div>
+                <textarea class='shs-tagList'></textarea>
+            </div>
+        </div>
+        <div class='shs-col shs-col2'>
+            <div style='margin:6px'>
+                <h4 style='margin:0 4px 0;display:inline-block;'>Tag Settings</h4>
+                <div><span>Tag: </span><span>#</span><input type='text' class='shs-tags-tagInput'/></div>
+                <div><span>Auto Complete Label: </span><input type='text' class='shs-tags-labelInput'/></div>
+                <div><span>Fill Text: </span><input type='text' class='shs-tags-valueInput'/></div>
+                <div><span>Project: </span><input type='text' class='shs-tags-revenueStreamInput'/></div>
+                <div><span>Task: </span><input type='text' class='shs-tags-taskInput'/></div>
+                <div><span>Hours: </span><input type='text' class='shs-tags-hoursInput'/></div>
+                <div><div class='shs-tags-save shs-button'>Update</div></div>
             </div>
         </div>
     </div>
     <div class='shs-tabcontent shs-configtab'>
-        <div class='shs-col1'>
+        <div class='shs-col shs-col1'>
             <div style='margin:6px'>
                 <h4 style='margin:0 4px 0;display:inline-block;'>Config: </h4>
                 <div class='shs-update shs-button'>Update</div>

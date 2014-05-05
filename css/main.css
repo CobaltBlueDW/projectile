@@ -66,6 +66,18 @@ option[save="0"]:hover{
     min-height: 250px;
 }
 
+/* layout */
+.shs-col {
+    display: inline-block;
+    padding: 1px;
+    margin: 1px;
+    min-width: 2px;
+    vertical-align: top;
+}
+.shs-col1, .shs-col2, .shs-col3 {
+    height: 150px;
+}
+
 /* buttons */
 .shs-button {
     background: none repeat scroll 0 0 #F9FDFF;

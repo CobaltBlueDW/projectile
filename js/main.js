@@ -4,7 +4,7 @@ function addJQuery(callback){
     //find server url old-school way
     var serverURL = document.getElementsByName("appServerURL")[0].getAttribute("content"); 
     var script = document.createElement("script");
-    script.setAttribute("src", serverURL+"/js/jq-1.11.0_jqui-1.10.4_min.js");
+    script.setAttribute("src", serverURL+"/js/jqbundle.js");
     script.addEventListener('load', function(){
         _jq(document).ready(function(){
             callback.call();
@@ -121,6 +121,26 @@ function main(){
     //    config = readCookie('shsConfg');   
     //});
     
+    //add ical tab interactions
+    jQuery('.shs-icaltab .shs-uploadfile').on('change', function(e){
+        file = e.target.files[0];
+        
+        var reader = new FileReader();
+        reader.onload = function() {
+            jQuery('.shs-icaltab .shs-icalContents').text(this.result);
+            var ical = jQuery.icalendar.parse(this.result);
+            if (ical) {
+                jQuery('.shs-icaltab .shs-icalContents').text(JSON.stringify(ical));
+            }
+        };
+        reader.readAsText(file);
+        
+    });
+    jQuery('.shs-icaltab .shs-import').on('click', function(){
+        
+    });
+    
+    //add other interactions
     window.setInterval(function(){ 
         jQuery.ajax({
             url: serverURL+'/server/services/SpringAhead.php?func=setUserPreferences',

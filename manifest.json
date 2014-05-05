@@ -4,7 +4,7 @@
         "shsMain":"file://./css/main.css"
     },
     "js":{
-        "jQ_jQUI":"file://./js/jq-1.11.0_jqui-1.10.4_min.js",
+        "jQ_jQUI":"file://./js/jqbundle.js",
         "shsMain":"file://./js/main.js",
         "shsMenu":"file://./js/OverlayMenu.js"
     },
