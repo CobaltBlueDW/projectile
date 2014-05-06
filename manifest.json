@@ -5,6 +5,7 @@
     },
     "js":{
         "jQ_jQUI":"file://./js/jqbundle.js",
+        "ical":"file://./js/ical.js",
         "shsMain":"file://./js/main.js",
         "shsMenu":"file://./js/OverlayMenu.js"
     },

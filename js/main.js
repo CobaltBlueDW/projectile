@@ -128,9 +128,9 @@ function main(){
         var reader = new FileReader();
         reader.onload = function() {
             jQuery('.shs-icaltab .shs-icalContents').text(this.result);
-            var ical = jQuery.icalendar.parse(this.result);
+            var ical = ICAL.parse(this.result);
             if (ical) {
-                jQuery('.shs-icaltab .shs-icalContents').text(JSON.stringify(ical));
+                jQuery('.shs-icaltab .shs-icalContents').text(JSON.stringify(ical, null, " "));
             }
         };
         reader.readAsText(file);
