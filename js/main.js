@@ -100,6 +100,11 @@ function main(){
         $this.addClass('shs-active');
         jQuery('.shs-overlaymenu .shs-tabzone > .shs-tabcontent').hide();
         jQuery('.shs-overlaymenu .shs-tabzone > .'+$this.attr('tab')).show();
+        
+        var menu = jQuery('.shs-overlaymenu');
+        if (menu.attr('collapsed') == "true") {
+            menu.attr('collapsed', "false");
+        }
     });
     
     //add config tab interactions
@@ -129,15 +134,26 @@ function main(){
         reader.onload = function() {
             jQuery('.shs-icaltab .shs-icalContents').text(this.result);
             var ical = ICAL.parse(this.result);
-            if (ical) {
-                jQuery('.shs-icaltab .shs-icalContents').text(JSON.stringify(ical, null, " "));
-            }
+            //if (ical) {
+            //    jQuery('.shs-icaltab .shs-icalContents').text(JSON.stringify(ical, null, " "));
+            //}
         };
         reader.readAsText(file);
         
     });
     jQuery('.shs-icaltab .shs-import').on('click', function(){
-        
+
+        var parser = new ICAL.ComponentParser({
+            parseEvent: true,
+            parseTimezone: false
+        });
+        parser.onevent = function(event){
+            console.log(event);
+        };
+        parser.oncomplete = function(status) {
+            console.log(status);
+        };
+        parser.process(jQuery('.shs-icaltab .shs-icalContents').text());
     });
     
     //add other interactions

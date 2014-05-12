@@ -15,7 +15,8 @@ class ScrapeJIRA extends Service{
         'AHIP' => 1500,
         'ACRP' => 1,
         'WCW' => 400,
-        'CHEC' => 100
+        'CHEC' => 100,
+        'ACA' => 1
     );
     
     public function __construct($username, $password, $domain){
