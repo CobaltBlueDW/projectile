@@ -142,16 +142,21 @@ function main(){
         
     });
     jQuery('.shs-icaltab .shs-import').on('click', function(){
-
+        TimeDay.addEditRow(jQuery('.timedayAddRow')[0], "new");
+    });
+    jQuery('.shs-icaltab .shs-view').on('click', function(){
         var parser = new ICAL.ComponentParser({
             parseEvent: true,
             parseTimezone: false
         });
         parser.onevent = function(event){
-            console.log(event);
-        };
-        parser.oncomplete = function(status) {
-            console.log(status);
+            var compose = '';
+            compose += event.summary+' ';
+            compose += (event.duration.hours+event.duration.minutes/60)+' ';
+            compose += event.startDate.toString()+' ';
+            
+            jQuery('.shs-icaltab .shs-icalContents').text(jQuery('.shs-icaltab .shs-icalContents').text()+compose+"\n");
+            //console.log(compose);
         };
         parser.process(jQuery('.shs-icaltab .shs-icalContents').text());
     });
