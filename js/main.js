@@ -40,6 +40,12 @@ var config = {
     autoFillProject: true
 };
 
+var ical = {
+    file: null,
+    fileContents: null,
+    events: null,
+};
+
 function main(){
     //console.log('running main');
     var jQuery = _jq;
@@ -94,12 +100,12 @@ function main(){
         }
     });
     jQuery('.shs-overlaymenu .shs-tab').on('click', function(){
-        $this = jQuery(this);
-        if (!$this.attr('tab')) return;
+        var jthis = jQuery(this);
+        if (!jthis.attr('tab')) return;
         jQuery('.shs-overlaymenu .shs-tabs > .shs-tab[tab]').removeClass('shs-active');
-        $this.addClass('shs-active');
+        jthis.addClass('shs-active');
         jQuery('.shs-overlaymenu .shs-tabzone > .shs-tabcontent').hide();
-        jQuery('.shs-overlaymenu .shs-tabzone > .'+$this.attr('tab')).show();
+        jQuery('.shs-overlaymenu .shs-tabzone > .'+jthis.attr('tab')).show();
         
         var menu = jQuery('.shs-overlaymenu');
         if (menu.attr('collapsed') == "true") {
@@ -128,37 +134,54 @@ function main(){
     
     //add ical tab interactions
     jQuery('.shs-icaltab .shs-uploadfile').on('change', function(e){
-        file = e.target.files[0];
+        ical.file = e.target.files[0];
         
         var reader = new FileReader();
         reader.onload = function() {
-            jQuery('.shs-icaltab .shs-icalContents').text(this.result);
-            var ical = ICAL.parse(this.result);
+            ical.fileContents = this.result;
+            //ical = ICAL.parse(ical.fileContents);
             //if (ical) {
             //    jQuery('.shs-icaltab .shs-icalContents').text(JSON.stringify(ical, null, " "));
             //}
+            
+            var parser = new ICAL.ComponentParser({
+                parseEvent: true,
+                parseTimezone: false
+            });
+            parser.onevent = function(event){
+                //console.log(event);
+                ical.events.push({
+                    description: event.summary,
+                    duration: event.duration.hours+event.duration.minutes/60,
+                    date: event.startDate
+                });
+            };
+            ical.events = [];
+            ical.current = 0;
+            parser.process(ical.fileContents);
         };
-        reader.readAsText(file);
+        reader.readAsText(ical.file);
         
     });
     jQuery('.shs-icaltab .shs-import').on('click', function(){
         TimeDay.addEditRow(jQuery('.timedayAddRow')[0], "new");
+        setupRowInputInteractions(jQuery('.timedayAddRow')[0]);
+        
+        var cEvent = ical.events[ical.current];
+        jQuery('input[name="timedayDate"]').val(simpleDateString(cEvent.date.toJSDate()));
+        jQuery('input.timehours_input').click().val(cEvent.duration).blur();
+        jQuery('input.timedayDescInput').click().val(cEvent.description).trigger('keydown');
+        ical.current++;
     });
     jQuery('.shs-icaltab .shs-view').on('click', function(){
-        var parser = new ICAL.ComponentParser({
-            parseEvent: true,
-            parseTimezone: false
-        });
-        parser.onevent = function(event){
-            var compose = '';
-            compose += event.summary+' ';
-            compose += (event.duration.hours+event.duration.minutes/60)+' ';
-            compose += event.startDate.toString()+' ';
-            
-            jQuery('.shs-icaltab .shs-icalContents').text(jQuery('.shs-icaltab .shs-icalContents').text()+compose+"\n");
-            //console.log(compose);
-        };
-        parser.process(jQuery('.shs-icaltab .shs-icalContents').text());
+        var html = '';
+        for(var index in ical.events){
+            html += ical.events[index].date+' ';
+            html += ical.events[index].enddate+' ';
+            html += ical.events[index].duration+' ';
+            html += ical.events[index].description+'\n';
+        }
+        jQuery('.shs-icaltab .shs-icalContents').text(html);
     });
     
     //add other interactions
@@ -173,7 +196,7 @@ function main(){
             success: function(data, textStatus, jqXHR){
                 //todo: signify completion
             }
-        }); 
+        });
     }, 1000*60);
     
     jQuery('#submitall').on('click', function(){
@@ -229,7 +252,18 @@ function main(){
     
     //load hooks
     jQuery(document).on('click', 'button.timedayAddRow', function(e){
-        jQuery('select.projId option').attr('save', 0);
+        setupRowInputInteractions(e);
+    });
+}
+
+function setupRowInputInteractions(e){
+    var jQuery = _jq;
+    //grab the server url
+    var serverURL = jQuery('meta[name="appServerURL"]').attr('content');
+    //grab username
+    var username = readCookie('LoginName', true);
+    
+    jQuery('select.projId option').attr('save', 0);
         for(var item in config.projList){
             //console.log(config.projList[item]);
             jQuery('select.projId option').each(function(e){
@@ -437,7 +471,6 @@ function main(){
                 }
             });
         });
-    });
 }
 
 function printConfig(config, target){
@@ -478,6 +511,10 @@ function readCookie(name, raw) {
 
 function eraseCookie(name) {
         createCookie(name,"",-1);
+}
+
+function simpleDateString(date){
+    return (date.getMonth()+1)+'/'+date.getDate()+'/'+date.getFullYear();
 }
 
 // load jQuery and execute the main function
