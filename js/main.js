@@ -442,6 +442,9 @@ function setupRowInputInteractions(e){
                     jQuery('input.timehours_input').val(ui.item.hours);
                 }
                 
+                //prompt re-check incase there are more hashtags
+                window.setTimeout(function(){jQuery('.timedayDescInput').autocomplete("search");}, 100);
+                
                 //prevent default behavior
                 return false;
             }
