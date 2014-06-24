@@ -357,14 +357,14 @@ function setupRowInputInteractions(e){
             minLength: 3,
             source: function(request, response){
                 //prepare request object
-                request = request.term.trim();
-                pound = request.indexOf('#');
-                if (pound == -1) return response(null);
+                var tags = request.term.match(/#[A-Za-z0-9-]+/);
+                if (!tags) return response(null);
+                request = tags[0].substring(1);
                 
-                hyphen = request.indexOf('-', pound);
+                var hyphen = request.indexOf('-');
                 if (hyphen != -1){
                     var requestObj = {
-                        projectName: request.substring(pound+1, hyphen),
+                        projectName: request.substring(0, hyphen),
                         ticketNumber: parseInt(request.substr(hyphen+1, 6))
                     }
 
@@ -387,12 +387,8 @@ function setupRowInputInteractions(e){
                         }
                     });
                     
-                    return; 
+                    return;
                 } else if (config.autocomplete && config.autocomplete.list) {
-                    var request = request.match(/#\w+/);
-                    if (!request) return response(null);
-                    request = request[0].substring(1);
-                    
                     var results = [];
                     var list = config.autocomplete.list;
                     for(var key in list){
@@ -402,7 +398,7 @@ function setupRowInputInteractions(e){
                     return response(results);
                 }
                 
-                 return response(null);
+                return response(null);
             },
             select: function(e, ui){
                 //do the replacement
