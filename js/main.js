@@ -46,6 +46,15 @@ var ical = {
     events: null,
 };
 
+var curEntryInputs = {
+    proj: null,
+    task: null,
+    type: null,
+    hours: null,
+    description: null,
+    date: null
+};
+
 function main(){
     //console.log('running main');
     var jQuery = _jq;
@@ -470,6 +479,36 @@ function setupRowInputInteractions(e){
                 }
             });
         });
+}
+
+function pushEntryInputs(target){
+    var jQuery = _jq;
+    //grab the server url
+    var serverURL = jQuery('meta[name="appServerURL"]').attr('content');
+    //grab username
+    var username = readCookie('LoginName', true);
+    
+    var jTarget = jQuery(target);
+    
+    //update hour value if field exists
+    var hoursField = jQuery(target+' input.timehours_input');
+    if (hoursField.length() > 0) {
+        var bestInput = 0;
+        var bestPriority = 0;
+        for (var hourInput in curEntryInputs.hours) {
+            if (curEntryInputs.hours[hourInput].input == null) continue;
+            if (curEntryInputs.hours[hourInput].priority === null) curEntryInputs.hours[hourInput].priority = 1;
+            if (curEntryInputs.hours[hourInput].priority > bestPriority) {
+                bestPriority = curEntryInputs.hours[hourInput].priority;
+                bestInput = curEntryInputs.hours[hourInput].input;
+            }
+        }
+        
+        hoursField.val(bestInput);
+    }
+    
+    //update date value if field exists
+    
 }
 
 function printConfig(config, target){
