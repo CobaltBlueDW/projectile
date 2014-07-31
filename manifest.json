@@ -4,8 +4,8 @@
         "shsMain":"file://./css/main.css"
     },
     "js":{
-        "jQ_jQUI":"file://./js/jqbundle.js",
-        "ical":"file://./js/ical.js",
+        "jQ_jQUI":"file://./js/extlibs/jqbundle.js",
+        "ical":"file://./js/extlibs/ical.js",
         "shsMain":"file://./js/main.js",
         "shsMenu":"file://./js/OverlayMenu.js"
     },
