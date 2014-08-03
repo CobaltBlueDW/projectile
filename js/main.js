@@ -4,7 +4,7 @@ function addJQuery(callback){
     //find server url old-school way
     var serverURL = document.getElementsByName("appServerURL")[0].getAttribute("content"); 
     var script = document.createElement("script");
-    script.setAttribute("src", serverURL+"/js/jqbundle.js");
+    script.setAttribute("src", serverURL+"/js/extlibs/jqbundle.js");
     script.addEventListener('load', function(){
         _jq(document).ready(function(){
             callback.call();

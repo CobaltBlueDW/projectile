@@ -7,6 +7,8 @@ var bootstrap = {};
 //The manifest format should be something like {"css":{"mycss":"file://./css/my.css","css2":"file://./dir2/file2.css"},"js":{...},"html:{...}}
 bootstrap.serverURL = "http://localhost/projectile";
 bootstrap.manifestURL = bootstrap.serverURL+"/manifest.json";
+bootstrap.loadQueue = [];
+bootstrap.readyQueue = [];
 
 
 /**
@@ -28,6 +30,13 @@ bootstrap.callAjax = function(url, callback, context, extraParam){
     }
     xmlhttp.open("GET", url, true);
     xmlhttp.send();
+}
+
+bootstrap.ready = function(callback, context, extraParam){
+    if (bootstrap.loadQueue.length == 0) {
+        callback.call(context, extraParam);
+    }
+    bootstrap.readyQueue.push({'callback': callback, 'context': context, 'extraParams': extraParam});
 }
 
 /**
@@ -73,6 +82,9 @@ bootstrap.loadCSS = function(cssObj){
         css.rel = 'stylesheet';
         css.href = this.resolveRelativeURL(cssObj[name]);
         css.name = name;
+        css.addEventListener('load', function(){
+            
+        }, false);
         document.getElementsByTagName('head')[0].appendChild(css);
     }
 }

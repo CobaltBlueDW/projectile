@@ -6,6 +6,7 @@
     "js":{
         "jQ_jQUI":"file://./js/extlibs/jqbundle.js",
         "ical":"file://./js/extlibs/ical.js",
+        "utils":"file://./js/libs/utils.js",
         "shsMain":"file://./js/main.js",
         "shsMenu":"file://./js/OverlayMenu.js"
     },
