@@ -34,6 +34,11 @@ option[save="0"]:hover{
 .shs-overlaymenu[collapsed="true"] {
     height: 24px;
 }
+@media print {
+    .shs-overlaymenu, .shs-overlaymenu-placeholder {
+        display: none;
+    }
+}
 
 /* tabs */
 .shs-tabs {
