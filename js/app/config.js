@@ -15,7 +15,7 @@ Requires([], function(){
      * @returns ext.contexthelpers.Users
      */
     shs.Config = function(serverURL, username){
-        this.BaseConstructor(serverURL, username);
+        this.ConfigConstructor(serverURL, username);
     }
     
     //extends from ...
@@ -34,8 +34,10 @@ Requires([], function(){
      * is stored here.  This function should get called once, in the class-named function, after all super 
      * constructor calls.
      */
-    shs.Config.prototype.BaseConfig = function(){
+    shs.Config.prototype.ConfigConstructor = function(serverURL, username){
         this.data = this.getDefaultSettings();
+        this.serverURL = serverURL;
+        this.username = username;
     }
     
     shs.Config.prototype.getDefaultSettings = function(){

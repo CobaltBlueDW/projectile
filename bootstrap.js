@@ -7,7 +7,7 @@ var bootstrap = {};
 //The manifest format should be something like {"css":{"mycss":"file://./css/my.css","css2":"file://./dir2/file2.css"},"js":{...},"html:{...}}
 bootstrap.serverURL = "http://localhost/projectile";
 bootstrap.manifestURL = bootstrap.serverURL+"/manifest.json";
-bootstrap.loadQueue = [];
+bootstrap.loadQueue = null;
 bootstrap.readyQueue = [];
 
 
@@ -33,10 +33,26 @@ bootstrap.callAjax = function(url, callback, context, extraParam){
 }
 
 bootstrap.ready = function(callback, context, extraParam){
-    if (bootstrap.loadQueue.length == 0) {
+    if ((this.loadQueue instanceof Object) && this.loadQueue.length == 0) {
         callback.call(context, extraParam);
     }
-    bootstrap.readyQueue.push({'callback': callback, 'context': context, 'extraParams': extraParam});
+    this.readyQueue.push({'callback': callback, 'context': context, 'extraParams': extraParam});
+}
+
+bootstrap.completedLoadOf = function(key){
+    this.loadQueue[key] = null;
+    
+    var isEmpty = true;
+    for(var lq in this.loadQueue){
+        if (this.loadQueue[lq]) isEmpty = false;
+    }
+    
+    if (isEmpty){
+        var cur = null;
+        while (cur = this.readyQueue.pop()) {
+            cur.callback.call(cur.context, cur.extraParam);
+        }
+    }
 }
 
 /**
@@ -45,6 +61,12 @@ bootstrap.ready = function(callback, context, extraParam){
  * @returns {undefined}
  */
 bootstrap.run = function(){
+    if (!(this.loadQueue instanceof Object)) {
+        this.loadQueue = {
+            'addAppMeta': true
+        };
+    }
+    
     this.callAjax(this.manifestURL, function(contents){
         this.manifest = JSON.parse(contents);
         
@@ -77,13 +99,16 @@ bootstrap.run = function(){
  */
 bootstrap.loadCSS = function(cssObj){
     for(var name in cssObj){
+        var url = this.resolveRelativeURL(cssObj[name]);
+        this.loadQueue[url] = true;
         var css = document.createElement('link');
         css.type = 'text/css';
         css.rel = 'stylesheet';
-        css.href = this.resolveRelativeURL(cssObj[name]);
+        css.href = url;
         css.name = name;
-        css.addEventListener('load', function(){
-            
+        css.addEventListener('load', function(event){
+            var url = event.target.href;
+            this.completedLoadOf(url);
         }, false);
         document.getElementsByTagName('head')[0].appendChild(css);
     }
@@ -97,10 +122,16 @@ bootstrap.loadCSS = function(cssObj){
  */
 bootstrap.loadJS = function(jsObj){
     for(var name in jsObj){
+        var url = this.resolveRelativeURL(jsObj[name]);
+        this.loadQueue[url] = true;
         var js = document.createElement('script');
         js.type = 'text/javascript';
-        js.src = this.resolveRelativeURL(jsObj[name]);
+        js.src = url;
         js.name = name;
+        js.addEventListener('load', function(event){
+            var url = event.target.src;
+            this.completedLoadOf(url);
+        }, false);
         document.getElementsByTagName("head")[0].appendChild(js);
     }
 }
@@ -113,19 +144,24 @@ bootstrap.loadJS = function(jsObj){
  */
 bootstrap.loadTEXT = function(textObj){
     for(var name in textObj){
-        this.callAjax(this.resolveRelativeURL(textObj[name]), function(contents, name){
+        var url = this.resolveRelativeURL(textObj[name]);
+        this.loadQueue[url] = true;
+        this.callAjax(url, function(contents, params){
             var text = document.createElement('script');
             text.type = 'text/plain';
             text.innerHTML = contents;
-            text.setAttribute("name", name);
+            text.setAttribute("name", params.name);
             document.getElementsByTagName("head")[0].appendChild(text);
-        }, this, name);
+            var url = event.target.src;
+            this.completedLoadOf(params.url);
+        }, this, {'name':name, 'url':url});
     }
 }
 
 bootstrap.addAppMeta = function(){
     this.addMeta('appServerURL', this.serverURL);
     this.addMeta('appManifestURL', this.manifestURL);
+    this.completedLoadOf('addAppMeta');
 }
 
 bootstrap.addMeta = function(name, value){
