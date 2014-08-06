@@ -37,6 +37,7 @@ bootstrap.ready = function(callback, context, extraParam){
         callback.call(context, extraParam);
     }
     this.readyQueue.push({'callback': callback, 'context': context, 'extraParams': extraParam});
+    console.log(this.readyQueue);
 }
 
 bootstrap.completedLoadOf = function(key){
@@ -46,6 +47,8 @@ bootstrap.completedLoadOf = function(key){
     for(var lq in this.loadQueue){
         if (this.loadQueue[lq]) isEmpty = false;
     }
+    
+    console.log(this.loadQueue);
     
     if (isEmpty){
         var cur = null;
@@ -99,16 +102,15 @@ bootstrap.run = function(){
  */
 bootstrap.loadCSS = function(cssObj){
     for(var name in cssObj){
-        var url = this.resolveRelativeURL(cssObj[name]);
-        this.loadQueue[url] = true;
         var css = document.createElement('link');
         css.type = 'text/css';
         css.rel = 'stylesheet';
-        css.href = url;
+        css.href = this.resolveRelativeURL(cssObj[name]);
         css.name = name;
+        this.loadQueue[css.href] = true;
         css.addEventListener('load', function(event){
             var url = event.target.href;
-            this.completedLoadOf(url);
+            bootstrap.completedLoadOf(url);
         }, false);
         document.getElementsByTagName('head')[0].appendChild(css);
     }
@@ -122,15 +124,14 @@ bootstrap.loadCSS = function(cssObj){
  */
 bootstrap.loadJS = function(jsObj){
     for(var name in jsObj){
-        var url = this.resolveRelativeURL(jsObj[name]);
-        this.loadQueue[url] = true;
         var js = document.createElement('script');
         js.type = 'text/javascript';
-        js.src = url;
+        js.src = this.resolveRelativeURL(jsObj[name]);
         js.name = name;
+        this.loadQueue[js.src] = true;
         js.addEventListener('load', function(event){
             var url = event.target.src;
-            this.completedLoadOf(url);
+            bootstrap.completedLoadOf(url);
         }, false);
         document.getElementsByTagName("head")[0].appendChild(js);
     }
@@ -153,7 +154,7 @@ bootstrap.loadTEXT = function(textObj){
             text.setAttribute("name", params.name);
             document.getElementsByTagName("head")[0].appendChild(text);
             var url = event.target.src;
-            this.completedLoadOf(params.url);
+            bootstrap.completedLoadOf(params.url);
         }, this, {'name':name, 'url':url});
     }
 }
