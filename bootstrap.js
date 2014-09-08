@@ -1,7 +1,7 @@
 
 
 //declare namspace for the bootstrap
-var bootstrap = {};
+bootstrap = {};
 
 //This file path should point to a manifet.json file containing all the files for the project
 //The manifest format should be something like {"css":{"mycss":"file://./css/my.css","css2":"file://./dir2/file2.css"},"js":{...},"html:{...}}
@@ -37,7 +37,6 @@ bootstrap.ready = function(callback, context, extraParam){
         callback.call(context, extraParam);
     }
     this.readyQueue.push({'callback': callback, 'context': context, 'extraParams': extraParam});
-    console.log(this.readyQueue);
 }
 
 bootstrap.completedLoadOf = function(key){
@@ -47,8 +46,6 @@ bootstrap.completedLoadOf = function(key){
     for(var lq in this.loadQueue){
         if (this.loadQueue[lq]) isEmpty = false;
     }
-    
-    console.log(this.loadQueue);
     
     if (isEmpty){
         var cur = null;

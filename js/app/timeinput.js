@@ -4,10 +4,12 @@
  * and open the template in the editor.
  */
 
-Requires([], function(){
+Requires(['util'], function(){
     
     var shs = NameSpace('shs');
     var jQuery = _jq;
+    var serverURL = jQuery('meta[name="appServerURL"]').attr('content');
+    var username = util.getCookie('LoginName', true);
 
     /**
      * Fabrication function
@@ -31,6 +33,7 @@ Requires([], function(){
     shs.TimeInput.prototype.hoursPriority = null;
     shs.TimeInput.prototype.descriptionPriority = null;
     shs.TimeInput.prototype.datePriority = null;
+    shs.TimeInput.prototype.renderTo = null;
     
     /**
      * Constructor:  because of the way JavaScript works(or doesn't) the actual constructor code for the class
@@ -40,14 +43,15 @@ Requires([], function(){
     shs.TimeInput.prototype.TimeInputConstructor = function(){
     }
     
-    function setupRowInputInteractions(e){
-    var jQuery = _jq;
-    //grab the server url
-    var serverURL = jQuery('meta[name="appServerURL"]').attr('content');
-    //grab username
-    var username = readCookie('LoginName', true);
+    shs.TimeInput.prototype.render = function(selector){
+        if (!selector) selector = '.timedaySectionBody';
+        this.setupRowInputInteractions(selector);
+        this.pushEntryInputs(selector);
+    }
     
-    jQuery('select.projId option').attr('save', 0);
+    shs.TimeInput.prototype.setupRowInputInteractions = function(selector){
+
+        jQuery(selector+' select.projId option').attr('save', 0);
         for(var item in config.projList){
             //console.log(config.projList[item]);
             jQuery('select.projId option').each(function(e){
@@ -60,28 +64,28 @@ Requires([], function(){
         } else {
             jQuery('select.projId option[save!="1"]').show();
         }
-        
-        jQuery('select.projId').on('change', function(e){
+
+        jQuery(selector+' select.projId').on('change', function(e){
             window.setTimeout(function(){
                 console.log('updating task choice');
-                
+
                 //update save attributes
                 jQuery('select.taskId option:not([save])').attr('save', 0);
                 for(var item in config.taskList){
                     //console.log(config.taskList[item]);
                     jQuery('select.taskId option').each(function(e){
-                        $jThis = jQuery(this);
-                        if ($jThis.text() == item) $jThis.attr('save', parseInt($jThis.attr('save'))+1);
+                        var jThis = jQuery(this);
+                        if (jThis.text() == item) jThis.attr('save', parseInt(jThis.attr('save'))+1);
                     });
                 }
-                
+
                 //handle hide action
                 if (config.hideUnused) {
                     jQuery('select.taskId option[save="0"]').hide();
                 } else {
                     jQuery('select.taskId option[save="0"]').show();
                 }
-                
+
                 //auto-select an option
                 if (config.autoFillTask) {
                     var max = { save:-1, value:null, text:null };
@@ -93,7 +97,7 @@ Requires([], function(){
                             max.text = jQuery(this).text();
                         }
                     });
-                    
+
                     //console.log(max);
                     jQuery('select.taskId').val(max.value);
                     // tell SpringAhead code about the update?
@@ -101,16 +105,16 @@ Requires([], function(){
                 }
             }, 100);
         });
-        
-        jQuery('select.projId').on('blur', function(e){
+
+        jQuery(selector+' select.projId').on('blur', function(e){
             if (config.record) {
                 var curVal = jQuery('select.projId option[value="'+jQuery(this).val()+'"]').text();
-                
+
                 // quit if it is the empty selection
                 if (curVal.trim() == "") {
                     return;
                 }
-                
+
                 //console.log(curVal);
                 if (config.projList[curVal] !== false) {
                     config.projList[curVal] = true;
@@ -118,16 +122,16 @@ Requires([], function(){
                 }
             }
         });
-        
-        jQuery('select.taskId').on('blur', function(e){
+
+        jQuery(selector+' select.taskId').on('blur', function(e){
             if (config.record) {
                 var curVal = jQuery('select.taskId option[value="'+jQuery(this).val()+'"]').text();
-                
+
                 // quit if it is the empty selection
                 if (curVal.trim() == "") {
                     return;
                 }
-                
+
                 //console.log(curVal);
                 if (config.taskList[curVal] !== false) {
                     config.taskList[curVal] = true;
@@ -135,8 +139,8 @@ Requires([], function(){
                 }
             }
         });
-        
-        jQuery('.timedayDescInput').autocomplete({
+
+        jQuery(selector+' .timedayDescInput').autocomplete({
             delay: 500,
             minLength: 3,
             source: function(request, response){
@@ -144,7 +148,7 @@ Requires([], function(){
                 var tags = request.term.match(/#[A-Za-z0-9-]+/);
                 if (!tags) return response(null);
                 request = tags[0].substring(1);
-                
+
                 var hyphen = request.indexOf('-');
                 if (hyphen != -1){
                     var requestObj = {
@@ -170,7 +174,7 @@ Requires([], function(){
                             response(tickets);
                         }
                     });
-                    
+
                     return;
                 } else if (config.autocomplete && config.autocomplete.list) {
                     var results = [];
@@ -181,14 +185,14 @@ Requires([], function(){
                     }
                     return response(results);
                 }
-                
+
                 return response(null);
             },
             select: function(e, ui){
                 //do the replacement
                 var result = this.value.replace(/#\w+\-?\d*/i, ui.item.value);
                 this.value = result;
-                
+
                 //auto-fill the project
                 //console.log(ui.item.revenueStream);
                 if (config.autoFillProject && ui.item.revenueStream) {
@@ -198,7 +202,7 @@ Requires([], function(){
                             //console.log(jQuery(this).text());
                             jQuery('select.projId').val(jQuery(this).val());
                             projectChanged(jQuery('select.projId')[0]); // tell SpringAhead code about the update
-                            
+
                             //update task priority
                             if (ui.item.task) {
                                 var task = ui.item.task.trim();
@@ -211,26 +215,26 @@ Requires([], function(){
                                     }
                                 });
                             }
-                            
+
                             jQuery('select.projId').trigger('change').trigger('blur');
                         }
                     });
                 }
-                
+
                 //update hours
                 if (ui.item.hours) {
                     jQuery('input.timehours_input').val(ui.item.hours);
                 }
-                
+
                 //prompt re-check incase there are more hashtags
                 window.setTimeout(function(){jQuery('.timedayDescInput').autocomplete("search");}, 100);
-                
+
                 //prevent default behavior
                 return false;
             }
         });
-        
-        jQuery('button.save').on('click', function(e, ui){
+
+        jQuery(selector+' button.save').on('click', function(e, ui){
             //grab submit data
             var submitData = {
                 projID: jQuery('select.projId option[value="'+jQuery('select.projId').val()+'"]').text(),
@@ -240,7 +244,7 @@ Requires([], function(){
                 type: jQuery('select.timeTypeId option[value="'+jQuery('select.timeTypeId').val()+'"]').text(),
                 description: jQuery('input.timedayDescInput').val()
             };
-            
+
             //send submit data
             jQuery.ajax({
                 url: serverURL+'/server/services/SpringAhead.php?func=submitTimeLog',
@@ -254,37 +258,31 @@ Requires([], function(){
                 }
             });
         });
-}
-
-function pushEntryInputs(target){
-    var jQuery = _jq;
-    //grab the server url
-    var serverURL = jQuery('meta[name="appServerURL"]').attr('content');
-    //grab username
-    var username = readCookie('LoginName', true);
-    
-    var jTarget = jQuery(target);
-    
-    //update hour value if field exists
-    var hoursField = jQuery(target+' input.timehours_input');
-    if (hoursField.length() > 0) {
-        var bestInput = 0;
-        var bestPriority = 0;
-        for (var hourInput in curEntryInputs.hours) {
-            if (curEntryInputs.hours[hourInput].input == null) continue;
-            if (curEntryInputs.hours[hourInput].priority === null) curEntryInputs.hours[hourInput].priority = 1;
-            if (curEntryInputs.hours[hourInput].priority > bestPriority) {
-                bestPriority = curEntryInputs.hours[hourInput].priority;
-                bestInput = curEntryInputs.hours[hourInput].input;
-            }
-        }
-        
-        hoursField.val(bestInput);
     }
-    
-    //update date value if field exists
-    
-}
+
+    shs.TimeInput.prototype.pushEntryInputs = function(target){
+        var jTarget = jQuery(target);
+
+        //update hour value if field exists
+        var hoursField = jQuery(target+' input.timehours_input');
+        if (hoursField.length() > 0) {
+            var bestInput = 0;
+            var bestPriority = 0;
+            for (var hourInput in curEntryInputs.hours) {
+                if (curEntryInputs.hours[hourInput].input == null) continue;
+                if (curEntryInputs.hours[hourInput].priority === null) curEntryInputs.hours[hourInput].priority = 1;
+                if (curEntryInputs.hours[hourInput].priority > bestPriority) {
+                    bestPriority = curEntryInputs.hours[hourInput].priority;
+                    bestInput = curEntryInputs.hours[hourInput].input;
+                }
+            }
+
+            hoursField.val(bestInput);
+        }
+
+        //update date value if field exists
+
+    }
     
 }, 'shs.TimeInput');
 
