@@ -1,7 +1,8 @@
 
 
 //declare namspace for the bootstrap
-bootstrap = {};
+window.bootstrap = {};
+var boostrap = window.bootstrap;
 
 //This file path should point to a manifet.json file containing all the files for the project
 //The manifest format should be something like {"css":{"mycss":"file://./css/my.css","css2":"file://./dir2/file2.css"},"js":{...},"html:{...}}
@@ -150,7 +151,6 @@ bootstrap.loadTEXT = function(textObj){
             text.innerHTML = contents;
             text.setAttribute("name", params.name);
             document.getElementsByTagName("head")[0].appendChild(text);
-            var url = event.target.src;
             bootstrap.completedLoadOf(params.url);
         }, this, {'name':name, 'url':url});
     }

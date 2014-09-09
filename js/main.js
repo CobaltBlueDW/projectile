@@ -210,7 +210,7 @@ function simpleDateString(date){
 }
 
 // load jQuery and execute the main function
-//bootstrap.ready(function(){    // If bootstrap is defined in the greasemonkey sandbox then it won't exist where this gets loaded to
+bootstrap.ready(function(){
     if (typeof(_jq) != "undefined") {
         _jq('document').ready(function(){
             window.setTimeout(main, 1);
@@ -222,5 +222,5 @@ function simpleDateString(date){
             });
         });
     }
-//}, this);
+}, this);
 

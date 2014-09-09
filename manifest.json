@@ -8,7 +8,12 @@
         "ical":"file://./js/extlibs/ical.js",
         "utils":"file://./js/libs/utils.js",
         "shsMain":"file://./js/main.js",
-        "shsMenu":"file://./js/OverlayMenu.js"
+        "shsMenu":"file://./js/OverlayMenu.js",
+        "shsConfig":"file://./js/app/config.js",
+        "shsHUD":"file://./js/app/hud.js",
+        "shsiCal":"file://./js/app/ical.js",
+        "shsTab":"file://./js/app/tab.js",
+        "shsTimeInput":"file://./js/app/timeinput.js"
     },
     "html":{
         "shsOverlayMenu":"file://./html/menu.html"

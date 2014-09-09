@@ -4,6 +4,7 @@
  * @returns {undefined}
  */
 
+bootstrap.ready(function(){
 Requires([], function(){
     
     var jsO = NameSpace('jsOverlay');
@@ -37,3 +38,4 @@ Requires([], function(){
     }
     
 }, 'jsOverlay.Tab');
+}, this);

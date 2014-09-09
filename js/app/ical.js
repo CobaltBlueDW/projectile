@@ -4,6 +4,7 @@
  * and open the template in the editor.
  */
 
+bootstrap.ready(function(){
 Requires([], function(){
     
     var shs = NameSpace('shs');
@@ -53,4 +54,4 @@ Requires([], function(){
     }
     
 }, 'shs.iCal');
-
+}, this);

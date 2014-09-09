@@ -4,6 +4,7 @@
  * @returns {undefined}
  */
 
+bootstrap.ready(function(){
 Requires([], function(){
     
     var jsO = NameSpace('jsOverlay');
@@ -90,3 +91,4 @@ Requires([], function(){
     }
     
 }, 'jsOverlay.HUD');
+}, this);
