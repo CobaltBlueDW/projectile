@@ -16,7 +16,7 @@ Requires([], function(){
      * @returns ext.contexthelpers.Users
      */
     jsO.HUD = function(selector){
-        this.BaseConstructor(selector);
+        this.HUDConstructor(selector);
     }
     
     //extends from ...
@@ -28,6 +28,8 @@ Requires([], function(){
     //members
     jsO.HUD.prototype.renderTo = null;
     jsO.HUD.prototype.tabs = null;
+    jsO.HUD.prototype.curTab = null;
+    jsO.HUD.prototype.collapseTab = true;
     
     /**
      * Constructor:  because of the way JavaScript works(or doesn't) the actual constructor code for the class
@@ -36,7 +38,7 @@ Requires([], function(){
      */
     jsO.HUD.prototype.HUDConstructor = function(selector){
         this.renderTo = this.createRenderContainer(selector);
-        this.tabs = [];
+        this.tabs = {};
     }
     
     jsO.HUD.prototype.createRenderContainer = function(selector){
@@ -55,39 +57,60 @@ Requires([], function(){
         jQuery(selector).html(html);
         
         this.drawTabs(selector+' .shs-tabs');
-        this.drawTabPage(selector+' .shs-tabzone');
+        this.drawTabPage(selector+' .shs-tabzone', this.curTab);
         
+        var self = this;
         jQuery('.shs-overlaymenu .shs-tab').on('click', function(){
             var jthis = jQuery(this);
             if (!jthis.attr('tab')) return;
-            jQuery('.shs-overlaymenu .shs-tabs > .shs-tab[tab]').removeClass('shs-active');
-            jthis.addClass('shs-active');
-            jQuery('.shs-overlaymenu .shs-tabzone > .shs-tabcontent').hide();
-            jQuery('.shs-overlaymenu .shs-tabzone > .'+jthis.attr('tab')).show();
-
-            var menu = jQuery('.shs-overlaymenu');
+            self.curTab = jthis.attr('tab');
+            
+            self.render();
+        });
+        jQuery('.shs-overlaymenu .shs-menuCollapse').on('click', function(){
+            var menu = jQuery(selector);
             if (menu.attr('collapsed') == "true") {
                 menu.attr('collapsed', "false");
+            } else {
+                menu.attr('collapsed', "true");
             }
         });
     }
     
     jsO.HUD.prototype.drawTabs = function(selector){
         var html = "";
-        for(var i=0; i<this.tabs.length; i++){
-            html += "<div class='shs-tabTarget-"+i+" shs-tab'></div>";
+        for(var i in this.tabs){
+            html += "<div class='shs-tabTarget-"+i+" shs-tab "+( i==this.curTab ? "shs-active" : "" )+"' tab='"+i+"' ></div>";
+        }
+        if (this.collapseTab) {
+            html += "<div class='shs-menuCollapse shs-tab'>_</div>";
         }
         jQuery(selector).html(html);
         
-        for(var i=0; i<this.tabs.length; i++){
+        for(var i in this.tabs){
             this.tabs[i].drawTab(selector+' .shs-tabTarget-'+i);
         }
     }
     
-    jsO.HUD.prototype.drawTabPage = function(selector, tabIndex){
+    jsO.HUD.prototype.drawTabPage = function(selector, tabName){
         if (!selector) selector = this.renderTo;
+
+        this.tabs[tabName].drawTabPage(selector);        
+    }
+    
+    jsO.HUD.prototype.addTab = function(tabName, tabObj){
+        if (tabName.indexOf(' ') > -1) throw new Exception("Tab name ("+tabName+") has a space in it.");
+        if (!(this.tabs instanceof Object)) this.tabs = {};
+        this.tabs[tabName] = tabObj;
         
-        
+        if (this.curTab === null) {
+            this.curTab = tabName;
+        }
+    }
+    
+    jsO.HUD.prototype.showTab = function(tabName, selector){
+        this.curTab = tabName;
+        this.render(selector);
     }
     
 }, 'jsOverlay.HUD');

@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-
+bootstrap.ready(function(){
 Requires(['util'], function(){
     
     var shs = NameSpace('shs');
@@ -285,4 +285,4 @@ Requires(['util'], function(){
     }
     
 }, 'shs.TimeInput');
-
+}, this);
