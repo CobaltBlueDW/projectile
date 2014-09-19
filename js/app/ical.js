@@ -15,8 +15,8 @@ Requires([], function(){
      * 
      * @returns ext.contexthelpers.Users
      */
-    shs.iCal = function(serverURL, username){
-        this.iCalConstructor(serverURL, username);
+    shs.iCal = function(){
+        this.iCalConstructor();
     }
     
     //extends from ...
@@ -27,26 +27,29 @@ Requires([], function(){
     
     //members
     shs.iCal.prototype.data = null;
-    shs.iCal.prototype.serverURL = null;
-    shs.iCal.prototype.username = null;
     
     /**
      * Constructor:  because of the way JavaScript works(or doesn't) the actual constructor code for the class
      * is stored here.  This function should get called once, in the class-named function, after all super 
      * constructor calls.
      */
-    shs.iCal.prototype.iCalConstructor = function(serverURL, username){
-        this.data = this.getDefaultSettings();
-        this.serverURL = serverURL;
-        this.username = username;
+    shs.iCal.prototype.iCalConstructor = function(){
+        
     }
     
-    shs.iCal.prototype.getDefaultSettings = function(){
-        return {
-            file: null,
-            fileContents: null,
-            events: null
-        };
+    shs.iCal.prototype.render = function(selector){
+        jQuery(selector).html(
+                  "<div class='shs-col shs-col1'>"
+                + " <div style='margin:6px'>"
+                + "  <h4 style='margin:0 4px 0;display:inline-block;'>Import: </h4>"
+                + "  <input type='file' class='shs-uploadfile' />"
+                + "  <div class='shs-import shs-button'>Import</div>"
+                + "  <div class='shs-view shs-button'>View</div>"
+                + " </div>"
+                + " <textarea class='shs-icalContents'></textarea>"
+                + " <div class='shs-icalImportAddRow'></div>"
+                + "</div>"
+        );
     }
     
     shs.iCal.prototype.toString = function(){

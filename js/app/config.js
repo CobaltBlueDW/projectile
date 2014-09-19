@@ -90,6 +90,7 @@ Requires([], function(){
     }
     
     shs.Config.prototype.setRemoteSettings = function(callback, context, extraParam){
+        var self = this;
         jQuery.ajax({
             url: this.serverURL+'/server/services/SpringAhead.php?func=setUserPreferences',
             method: 'POST',
@@ -99,7 +100,7 @@ Requires([], function(){
             context: this,
             success: function(data, textStatus, jqXHR){
                 //todo: signify completion
-                callback.call(context, self, extraParam);
+                if (callback instanceof Function) callback.call(context, self, extraParam);
             }
         });
     }
@@ -117,6 +118,23 @@ Requires([], function(){
                 + "<textarea class='shs-configList'>"+this.toString()+"</textarea>"
                 + "</div>"
         );
+        
+        var self = this;
+        jQuery(selector+' .shs-refresh').on('click', function(){
+            self.render(selector);
+        });
+        jQuery(selector+' .shs-update').on('click', function(){
+            var temp = JSON.parse(jQuery(selector+' .shs-configList').val());
+            //console.log(temp);
+            self.data = temp;
+            self.render();
+        });
+        jQuery(selector+' .shs-remoteSave').on('click', function(){
+            self.setRemoteSettings();
+        });
+        jQuery(selector+' .shs-remoteLoad').on('click', function(){
+            self.getRemoteSettings(self.render, self, selector);
+        });
     }
     
     shs.Config.prototype.toString = function(){

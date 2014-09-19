@@ -4,7 +4,7 @@ function simpleDateString(date){
 }
 
 bootstrap.ready(function(){
-Requires(['shs.Config', 'jsOverlay.HUD', 'jsOverlay.Tab'], function(){
+Requires(['shs.Config', 'jsOverlay.HUD', 'jsOverlay.Tab', 'shs.TagManager'], function(){
     
     var shs = NameSpace('shs');
     var jQuery = _jq;
@@ -26,6 +26,8 @@ Requires(['shs.Config', 'jsOverlay.HUD', 'jsOverlay.Tab'], function(){
     
     //members
     shs.Main.prototype.config = null;
+    shs.Main.prototype.tagManager = null;
+    shs.Main.prototype.iCal = null;
     shs.Main.prototype.serverURL = null;
     shs.Main.prototype.username = null;
     shs.Main.prototype.display = null;
@@ -45,31 +47,18 @@ Requires(['shs.Config', 'jsOverlay.HUD', 'jsOverlay.Tab'], function(){
         this.config = new shs.Config(this.serverURL, this.username);
         this.config.getRemoteSettings();
 
+        //load #tags
+        this.tagManager = new shs.TagManager(this.config);
+        
+        //load ical
+        this.iCal = new shs.iCal();
+
         //load display
         this.display = new jsOverlay.HUD('body');
         this.display.addTab("config", new jsOverlay.Tab(null, "Config", this.config));
-        //this.display.addTab("tags", new jsOverlay.Tab(null, "#Tags"));
-        //this.display.addTab("ical", new jsOverlay.Tab(null, "iCal"));
+        this.display.addTab("tags", new jsOverlay.Tab(null, "#Tags", this.tagManager));
+        this.display.addTab("ical", new jsOverlay.Tab(null, "iCal", this.iCal));
         this.display.render();
-
-        //add config tab interactions
-        jQuery('.shs-overlaymenu .shs-refresh').on('click', function(){
-            //console.log(config);
-            printConfig(config, '.shs-configList');
-        });
-        jQuery('.shs-overlaymenu .shs-update').on('click', function(){
-            var temp = JSON.parse(jQuery('.shs-overlaymenu .shs-configList').val());
-            //console.log(temp);
-            config = temp;
-        });
-        //jQuery('.shs-overlaymenu .shs-save').on('click', function(){
-        //    createCookie('shsConfg', config);
-        //});
-        //  add auto-save
-        //window.setInterval(function(){ createCookie('shsConfg', config); }, 1000*10);
-        //jQuery('.shs-overlaymenu .shs-load').on('click', function(){
-        //    config = readCookie('shsConfg');   
-        //});
 
         //add ical tab interactions
         jQuery('.shs-icaltab .shs-uploadfile').on('change', function(e){
