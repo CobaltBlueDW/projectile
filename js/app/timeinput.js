@@ -123,7 +123,7 @@ Requires(['util'], function(){
                 //console.log(curVal);
                 if (self.config.data.projList[curVal] !== false) {
                     self.config.data.projList[curVal] = true;
-                    printConfig(self.config.data, '.shs-configList');
+                    self.config.render();
                 }
             }
         });
@@ -140,7 +140,7 @@ Requires(['util'], function(){
                 //console.log(curVal);
                 if (self.config.data.taskList[curVal] !== false) {
                     self.config.data.taskList[curVal] = true;
-                    printConfig(self.config.data, '.shs-configList');
+                    self.config.render();
                 }
             }
         });
@@ -232,7 +232,7 @@ Requires(['util'], function(){
                 }
 
                 //prompt re-check incase there are more hashtags
-                window.setTimeout(function(){jQuery('.timedayDescInput').autocomplete("search");}, 100);
+                window.setTimeout(function(){jQuery(selector+' .timedayDescInput').autocomplete("search");}, 100);
 
                 //prevent default behavior
                 return false;
