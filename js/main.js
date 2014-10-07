@@ -53,7 +53,7 @@ Requires(['shs.Config', 'jsOverlay.HUD', 'jsOverlay.Tab', 'shs.TagManager', 'shs
         //load ical
         this.iCal = new shs.iCal();
         
-        this.timeInput = new shs.TimeInput();
+        this.timeInput = new shs.TimeInput(this.config);
         
         //load display
         this.display = new jsOverlay.HUD('body');
@@ -89,7 +89,7 @@ Requires(['shs.Config', 'jsOverlay.HUD', 'jsOverlay.Tab', 'shs.TagManager', 'shs
         
         //load hooks
         jQuery(document).on('click', 'button.timedayAddRow', function(e){
-            self.timeInput.setupRowInputInteractions(e);
+            self.timeInput.setupRowInputInteractions(null, e);
         });
     };
     

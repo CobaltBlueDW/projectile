@@ -16,8 +16,8 @@ Requires(['util'], function(){
      * 
      * @returns ext.contexthelpers.Users
      */
-    shs.TimeInput = function(){
-        this.TimeInputConstructor();
+    shs.TimeInput = function(config){
+        this.TimeInputConstructor(config);
     }
     
     //extends from ...
@@ -34,44 +34,49 @@ Requires(['util'], function(){
     shs.TimeInput.prototype.descriptionPriority = null;
     shs.TimeInput.prototype.datePriority = null;
     shs.TimeInput.prototype.renderTo = null;
+    shs.TimeInput.prototype.config = null;
     
     /**
      * Constructor:  because of the way JavaScript works(or doesn't) the actual constructor code for the class
      * is stored here.  This function should get called once, in the class-named function, after all super 
      * constructor calls.
      */
-    shs.TimeInput.prototype.TimeInputConstructor = function(){
+    shs.TimeInput.prototype.TimeInputConstructor = function(config){
+        this.renderTo = '.timedaySectionBody';
+        this.config = config;
     }
     
     shs.TimeInput.prototype.render = function(selector){
-        if (!selector) selector = '.timedaySectionBody';
+        if (!selector) selector = this.renderTo;
         this.setupRowInputInteractions(selector);
         this.pushEntryInputs(selector);
     }
     
     shs.TimeInput.prototype.setupRowInputInteractions = function(selector){
-
+        if (!selector) selector = this.renderTo;
+        
         jQuery(selector+' select.projId option').attr('save', 0);
-        for(var item in config.projList){
+        for(var item in this.config.data.projList){
             //console.log(config.projList[item]);
             jQuery('select.projId option').each(function(e){
                 $jThis = jQuery(this);
                 if ($jThis.text() == item) $jThis.attr('save', 1);
             });
         }
-        if (config.hideUnused) {
+        if (this.config.hideUnused) {
             jQuery('select.projId option[save!="1"]').hide();
         } else {
             jQuery('select.projId option[save!="1"]').show();
         }
 
+        var self = this;
         jQuery(selector+' select.projId').on('change', function(e){
             window.setTimeout(function(){
                 console.log('updating task choice');
 
                 //update save attributes
                 jQuery('select.taskId option:not([save])').attr('save', 0);
-                for(var item in config.taskList){
+                for(var item in self.config.data.taskList){
                     //console.log(config.taskList[item]);
                     jQuery('select.taskId option').each(function(e){
                         var jThis = jQuery(this);
@@ -80,14 +85,14 @@ Requires(['util'], function(){
                 }
 
                 //handle hide action
-                if (config.hideUnused) {
+                if (self.config.data.hideUnused) {
                     jQuery('select.taskId option[save="0"]').hide();
                 } else {
                     jQuery('select.taskId option[save="0"]').show();
                 }
 
                 //auto-select an option
-                if (config.autoFillTask) {
+                if (self.config.data.autoFillTask) {
                     var max = { save:-1, value:null, text:null };
                     jQuery('select.taskId option').each(function(){
                         var thisSave = parseInt(jQuery(this).attr('save'));
@@ -107,7 +112,7 @@ Requires(['util'], function(){
         });
 
         jQuery(selector+' select.projId').on('blur', function(e){
-            if (config.record) {
+            if (self.config.data.record) {
                 var curVal = jQuery('select.projId option[value="'+jQuery(this).val()+'"]').text();
 
                 // quit if it is the empty selection
@@ -116,15 +121,15 @@ Requires(['util'], function(){
                 }
 
                 //console.log(curVal);
-                if (config.projList[curVal] !== false) {
-                    config.projList[curVal] = true;
-                    printConfig(config, '.shs-configList');
+                if (self.config.data.projList[curVal] !== false) {
+                    self.config.data.projList[curVal] = true;
+                    printConfig(self.config.data, '.shs-configList');
                 }
             }
         });
 
         jQuery(selector+' select.taskId').on('blur', function(e){
-            if (config.record) {
+            if (self.config.data.record) {
                 var curVal = jQuery('select.taskId option[value="'+jQuery(this).val()+'"]').text();
 
                 // quit if it is the empty selection
@@ -133,9 +138,9 @@ Requires(['util'], function(){
                 }
 
                 //console.log(curVal);
-                if (config.taskList[curVal] !== false) {
-                    config.taskList[curVal] = true;
-                    printConfig(config, '.shs-configList');
+                if (self.config.data.taskList[curVal] !== false) {
+                    self.config.data.taskList[curVal] = true;
+                    printConfig(self.config.data, '.shs-configList');
                 }
             }
         });
@@ -176,9 +181,9 @@ Requires(['util'], function(){
                     });
 
                     return;
-                } else if (config.autocomplete && config.autocomplete.list) {
+                } else if (self.config.data.autocomplete && self.config.data.autocomplete.list) {
                     var results = [];
-                    var list = config.autocomplete.list;
+                    var list = self.config.data.autocomplete.list;
                     for(var key in list){
                         //console.log(request+' '+key);
                         if (key.indexOf(request) != -1) results.push(list[key]);
@@ -195,7 +200,7 @@ Requires(['util'], function(){
 
                 //auto-fill the project
                 //console.log(ui.item.revenueStream);
-                if (config.autoFillProject && ui.item.revenueStream) {
+                if (self.config.data.autoFillProject && ui.item.revenueStream) {
                     var find = ui.item.revenueStream.trim();
                     jQuery('select.projId option').each(function(){
                         if (jQuery(this).text().trim() == find) {

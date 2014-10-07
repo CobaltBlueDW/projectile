@@ -120,7 +120,6 @@ Requires([], function(){
             }
         }
         
-        
         menu.attr('collapsed', state);
         this.render();
         return state;
