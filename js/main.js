@@ -84,7 +84,7 @@ Requires(['shs.Config', 'jsOverlay.HUD', 'jsOverlay.Tab', 'shs.TagManager', 'shs
         
         //setup menu
         if (this.config.data.menu && this.config.data.menu.startCollapsed) {
-            jQuery('.shs-overlaymenu').attr('collapsed', "true");
+            this.display.toggleCollapse("true");
         }
         
         //load hooks

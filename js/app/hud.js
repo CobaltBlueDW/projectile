@@ -64,16 +64,10 @@ Requires([], function(){
             var jthis = jQuery(this);
             if (!jthis.attr('tab')) return;
             self.curTab = jthis.attr('tab');
-            
-            self.render();
+            self.toggleCollapse("false");
         });
         jQuery('.shs-overlaymenu .shs-menuCollapse').on('click', function(){
-            var menu = jQuery(selector);
-            if (menu.attr('collapsed') == "true") {
-                menu.attr('collapsed', "false");
-            } else {
-                menu.attr('collapsed', "true");
-            }
+            self.toggleCollapse();
         });
     }
     
@@ -111,6 +105,25 @@ Requires([], function(){
     jsO.HUD.prototype.showTab = function(tabName, selector){
         this.curTab = tabName;
         this.render(selector);
+    }
+    
+    jsO.HUD.prototype.toggleCollapse = function(collapse){
+        var menu = jQuery(this.renderTo);
+        var state = "true";
+        if(collapse !== undefined){
+            state = collapse;
+        } else {
+            if (menu.attr('collapsed') == "true") {
+                state = "false";
+            } else {
+                state = "true";
+            }
+        }
+        
+        
+        menu.attr('collapsed', state);
+        this.render();
+        return state;
     }
     
 }, 'jsOverlay.HUD');
