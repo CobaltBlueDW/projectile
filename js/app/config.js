@@ -4,6 +4,7 @@
  * and open the template in the editor.
  */
 
+bootstrap.ready(function(){
 Requires([], function(){
     
     var shs = NameSpace('shs');
@@ -82,13 +83,14 @@ Requires([], function(){
                 //todo: signify completion
                 if (jqXHR.responseJSON) {
                     self.data = jqXHR.responseJSON;
-                    callback.call(context, self, extraParam);
+                    if (callback instanceof Function) callback.call(context, self, extraParam);
                 }
             }
         });
     }
     
     shs.Config.prototype.setRemoteSettings = function(callback, context, extraParam){
+        var self = this;
         jQuery.ajax({
             url: this.serverURL+'/server/services/SpringAhead.php?func=setUserPreferences',
             method: 'POST',
@@ -98,8 +100,40 @@ Requires([], function(){
             context: this,
             success: function(data, textStatus, jqXHR){
                 //todo: signify completion
-                callback.call(context, self, extraParam);
+                if (callback instanceof Function) callback.call(context, self, extraParam);
             }
+        });
+    }
+    
+    shs.Config.prototype.render = function(selector){
+        jQuery(selector).html(
+                "<div class='shs-col shs-col1'>"
+                + "<div style='margin:6px'>"
+                + "<h4 style='margin:0 4px 0;display:inline-block;'>Config: </h4>"
+                + "<div class='shs-update shs-button'>Update</div>"
+                + "<div class='shs-refresh shs-button'>Refresh</div>"
+                + "<div class='shs-remoteSave shs-button'>Remote Save</div>"
+                + "<div class='shs-remoteLoad shs-button'>Remote Load</div>"
+                + "</div>"
+                + "<textarea class='shs-configList'>"+this.toString()+"</textarea>"
+                + "</div>"
+        );
+        
+        var self = this;
+        jQuery(selector+' .shs-refresh').on('click', function(){
+            self.render(selector);
+        });
+        jQuery(selector+' .shs-update').on('click', function(){
+            var temp = JSON.parse(jQuery(selector+' .shs-configList').val());
+            //console.log(temp);
+            self.data = temp;
+            self.render();
+        });
+        jQuery(selector+' .shs-remoteSave').on('click', function(){
+            self.setRemoteSettings();
+        });
+        jQuery(selector+' .shs-remoteLoad').on('click', function(){
+            self.getRemoteSettings(self.render, self, selector);
         });
     }
     
@@ -108,4 +142,5 @@ Requires([], function(){
     }
     
 }, 'shs.Config');
+}, this);
 
