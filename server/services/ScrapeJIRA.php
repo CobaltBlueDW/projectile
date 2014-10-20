@@ -34,7 +34,7 @@ class ScrapeJIRA extends Service{
         }
         
         //choose project to scrape from/for
-        if (empty($projectName) || empty($this->projects[$projectName])) {
+        if (empty($projectName)) {
             $keys = array_keys($this->projects);
             $randIndex = mt_rand(0, count($keys)-1);
             $projectName = $keys[$randIndex];

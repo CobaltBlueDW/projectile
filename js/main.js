@@ -4,7 +4,7 @@ function simpleDateString(date){
 }
 
 bootstrap.ready(function(){
-Requires(['shs.Config', 'jsOverlay.HUD', 'jsOverlay.Tab', 'shs.TagManager', 'shs.TimeInput'], function(){
+Requires(['shs.Config', 'jsOverlay.HUD', 'jsOverlay.Tab', 'shs.TagManager', 'shs.TimeInput', 'shs.Print'], function(){
     
     var shs = NameSpace('shs');
     var jQuery = _jq;
@@ -28,6 +28,7 @@ Requires(['shs.Config', 'jsOverlay.HUD', 'jsOverlay.Tab', 'shs.TagManager', 'shs
     shs.Main.prototype.config = null;
     shs.Main.prototype.tagManager = null;
     shs.Main.prototype.iCal = null;
+    shs.Main.prototype.print = null;
     shs.Main.prototype.serverURL = null;
     shs.Main.prototype.username = null;
     shs.Main.prototype.display = null;
@@ -53,6 +54,9 @@ Requires(['shs.Config', 'jsOverlay.HUD', 'jsOverlay.Tab', 'shs.TagManager', 'shs
         //load ical
         this.iCal = new shs.iCal();
         
+        //load print
+        this.print = new shs.Print();
+        
         this.timeInput = new shs.TimeInput(this.config);
         
         //load display
@@ -60,6 +64,7 @@ Requires(['shs.Config', 'jsOverlay.HUD', 'jsOverlay.Tab', 'shs.TagManager', 'shs
         this.display.addTab("config", new jsOverlay.Tab(null, "Config", this.config));
         this.display.addTab("tags", new jsOverlay.Tab(null, "#Tags", this.tagManager));
         this.display.addTab("ical", new jsOverlay.Tab(null, "iCal", this.iCal));
+        this.display.addTab("print", new jsOverlay.Tab(null, "Print", this.print));
         this.display.render();
         
         this.config.getRemoteSettings( function(){ this.display.render(); }, this);
