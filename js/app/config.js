@@ -85,6 +85,9 @@ Requires([], function(){
                     self.data = jqXHR.responseJSON;
                     if (callback instanceof Function) callback.call(context, self, extraParam);
                 }
+            },
+            error: function(jqXHR, textStatus, errorThrown){
+                throw errorThrown+":"+jqXHR;
             }
         });
     }
@@ -125,7 +128,6 @@ Requires([], function(){
         });
         jQuery(selector+' .shs-update').on('click', function(){
             var temp = JSON.parse(jQuery(selector+' .shs-configList').val());
-            //console.log(temp);
             self.data = temp;
             self.render();
         });

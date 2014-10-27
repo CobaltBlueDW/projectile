@@ -45,6 +45,15 @@ class SpringAhead extends Service {
             }
         }
         
+        //fix UTF8 issues
+        //foreach($result as &$record){
+            //$record['description'] = utf8_encode($record['description']);
+            //$record['revenueStream'] = utf8_encode($record['revenueStream']);
+            
+            //$record['description'] = iconv('UTF-8', 'UTF-8//IGNORE', utf8_encode($record['description']));
+            //$record['revenueStream'] = iconv('UTF-8', 'UTF-8//IGNORE', utf8_encode($record['revenueStream']));
+        //}
+        
         return $result;
     }
     
