@@ -5,7 +5,7 @@
  */
 
 bootstrap.ready(function(){
-Requires(['shs.Config'], function(){
+Requires(['shs.Config', 'shs.HashTag'], function(){
     
     var shs = NameSpace('shs');
     var jQuery = _jq;

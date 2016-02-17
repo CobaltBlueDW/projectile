@@ -4,7 +4,7 @@ function simpleDateString(date){
 }
 
 bootstrap.ready(function(){
-Requires(['shs.Config', 'jsOverlay.HUD', 'jsOverlay.Tab', 'shs.TagManager', 'shs.TimeInput', 'shs.Print'], function(){
+Requires(['shs.Config', 'jsOverlay.HUD', 'jsOverlay.Tab', 'shs.TagManager', 'shs.TimeInput', 'shs.iCal', 'shs.Print'], function(){
     
     var shs = NameSpace('shs');
     var jQuery = _jq;
@@ -94,7 +94,7 @@ Requires(['shs.Config', 'jsOverlay.HUD', 'jsOverlay.Tab', 'shs.TagManager', 'shs
         
         //load hooks
         jQuery(document).on('click', 'button.timedayAddRow', function(e){
-            self.timeInput.setupRowInputInteractions(null, e);
+            self.timeInput.renderTo('.timedaySectionBody');
         });
     };
     

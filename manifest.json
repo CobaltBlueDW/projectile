@@ -15,7 +15,8 @@
         "shsiCal":"file://./js/app/ical.js",
         "shsPrint":"file://./js/app/print.js",
         "shsTab":"file://./js/app/tab.js",
-        "shsTimeInput":"file://./js/app/timeinput.js"
+        "shsTimeInput":"file://./js/app/timeinput.js",
+        "shsHashTag":"file://./js/app/hashtag.js"
     },
     "ignore":{
         "allTickets":"file://./server/services/SpringAhead.php?func=getShortTickets"

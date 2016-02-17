@@ -55,6 +55,8 @@ option[save="0"]:hover{
     border-radius: 4px 4px 0px 0px;
     padding: 4px 6px;
     cursor: pointer;
+    vertical-align: bottom;
+    margin: 0 0 0 2px;
 }
 .shs-tab.shs-active {
     border-bottom: none;
