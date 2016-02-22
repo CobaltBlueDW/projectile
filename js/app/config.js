@@ -111,28 +111,20 @@ Requires([], function(){
     shs.Config.prototype.render = function(selector){
         jQuery(selector).html(
                 "<div class='shs-col shs-col1'>"
-                + "<div style='margin:6px'>"
-                + "<h4 style='margin:0 4px 0;display:inline-block;'>Config: </h4>"
-                + "<div class='shs-update shs-button'>Update</div>"
-                + "<div class='shs-refresh shs-button'>Refresh</div>"
-                + "<div class='shs-remoteSave shs-button'>Remote Save</div>"
-                + "<div class='shs-remoteLoad shs-button'>Remote Load</div>"
-                + "</div>"
                 + "<textarea class='shs-configList'>"+this.toString()+"</textarea>"
+                + "<div class='shs-formrow'>"
+                + " <div class='shs-remoteSave shs-button'>Save</div>"
+                + " <div class='shs-remoteLoad shs-button'>Load</div>"
+                + "</div>"
                 + "</div>"
         );
         
         var self = this;
-        jQuery(selector+' .shs-refresh').on('click', function(){
-            self.render(selector);
-        });
-        jQuery(selector+' .shs-update').on('click', function(){
+        jQuery(selector+' .shs-remoteSave').on('click', function(){
             var temp = JSON.parse(jQuery(selector+' .shs-configList').val());
             self.data = temp;
-            self.render();
-        });
-        jQuery(selector+' .shs-remoteSave').on('click', function(){
             self.setRemoteSettings();
+            self.render();
         });
         jQuery(selector+' .shs-remoteLoad').on('click', function(){
             self.getRemoteSettings(self.render, self, selector);

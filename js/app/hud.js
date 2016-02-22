@@ -57,7 +57,10 @@ Requires([], function(){
         jQuery(selector).html(html);
         
         this.drawTabs(selector+' .shs-tabs');
-        this.drawTabPage(selector+' .shs-tabzone', this.curTab);
+        var att = jQuery(selector).attr('collapsed');
+        if (att == undefined || att == 'false') {
+            this.drawTabPage(selector+' .shs-tabzone', this.curTab);
+        }
         
         var self = this;
         jQuery('.shs-overlaymenu .shs-tab').on('click', function(){
