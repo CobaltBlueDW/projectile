@@ -61,10 +61,10 @@ Requires(['shs.Config', 'jsOverlay.HUD', 'jsOverlay.Tab', 'shs.TagManager', 'shs
         
         //load display
         this.display = new jsOverlay.HUD('body');
-        this.display.addTab("config", new jsOverlay.Tab(null, "Config", this.config));
         this.display.addTab("tags", new jsOverlay.Tab(null, "#Tags", this.tagManager));
         this.display.addTab("ical", new jsOverlay.Tab(null, "iCal", this.iCal));
         this.display.addTab("print", new jsOverlay.Tab(null, "Print", this.print));
+        this.display.addTab("config", new jsOverlay.Tab(null, "Config", this.config));
         this.display.render();
         
         this.config.getRemoteSettings( function(){ this.display.render(); }, this);

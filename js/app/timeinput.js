@@ -89,15 +89,16 @@ Requires(['util', 'shs.HashTag'], function(){
 
         jQuery(selector+' select.projId').on('blur', function(e){
             if (self.config.data.record) {
-                var curVal = jQuery('select.projId option[value="'+jQuery(this).val()+'"]').text();
+                var curName = jQuery('select.projId option[value="'+jQuery(this).val()+'"]').text();
+                var curVal = jQuery('select.projId option[value="'+jQuery(this).val()+'"]').val();
 
                 // quit if it is the empty selection
-                if (curVal.trim() == "") {
+                if (curName.trim() == "") {
                     return;
                 }
 
                 if (self.config.data.projList[curVal] !== false) {
-                    self.config.data.projList[curVal] = true;
+                    self.config.data.projList[curVal] = curName;
                     self.config.render();
                 }
             }
@@ -110,15 +111,16 @@ Requires(['util', 'shs.HashTag'], function(){
         
         jQuery(selector+' select.taskId').on('blur', function(e){
             if (self.config.data.record) {
-                var curVal = jQuery('select.taskId option[value="'+jQuery(this).val()+'"]').text();
+                var curName = jQuery('select.taskId option[value="'+jQuery(this).val()+'"]').text();
+                var curVal = jQuery('select.taskId option[value="'+jQuery(this).val()+'"]').val();
 
                 // quit if it is the empty selection
-                if (curVal.trim() == "") {
+                if (curName.trim() == "") {
                     return;
                 }
 
                 if (self.config.data.taskList[curVal] !== false) {
-                    self.config.data.taskList[curVal] = true;
+                    self.config.data.taskList[curVal] = curName;
                     self.config.render();
                 }
             }

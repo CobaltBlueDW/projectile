@@ -18,7 +18,7 @@ option[save="0"]:hover{
 .shs-overlaymenu, .shs-overlaymenu-placeholder {
     bottom: 0;
     display: block;
-    height: 256px;
+    height: 312px;
     left: 0;
     position: static;
     width: 100%;
@@ -26,7 +26,7 @@ option[save="0"]:hover{
 .shs-overlaymenu {
     bottom: 0;
     display: block;
-    height: 256px;
+    height: 312px;
     left: 0;
     position: fixed;
     width: 100%;
@@ -70,7 +70,7 @@ option[save="0"]:hover{
     background: none repeat scroll 0 0 #DEE5F2;
     border: 2px solid #333333;
     display: block;
-    min-height: 250px;
+    min-height: 286px;
 }
 
 /* layout */
@@ -91,11 +91,27 @@ option[save="0"]:hover{
     border: 1px solid #333333;
     border-radius: 4px;
     padding: 2px;
+    margin: 2px;
     display: inline-block;
     cursor: pointer;
 }
 .shs-button:hover {
     border-color: #FFFFFF;
+}
+
+/* forms */
+.shs-formrow {
+    display: block;
+    margin: 6px;
+}
+.shs-formlabel {
+    min-width: 192px;
+    display: inline-block;
+}
+.shs-formrow input, .shs-formrow select{
+    border-radius: 4px;
+    padding: 2px;
+    min-width: 96px;
 }
 
 /* specifics */
@@ -110,4 +126,7 @@ option[save="0"]:hover{
     height: 212px;
     width: 425px;
     display: block;
+}
+.shs-configList{
+    margin: 6px;
 }
