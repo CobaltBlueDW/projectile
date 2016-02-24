@@ -130,3 +130,14 @@ option[save="0"]:hover{
 .shs-configList{
     margin: 6px;
 }
+.shs-icalContents{
+    overflow: auto;
+    height: 240px;
+    width: 100%;
+    box-sizing: border-box;
+    resize: both;
+}
+.shs-icalCurrentRow{
+    background: none repeat scroll 0 0 #F9FDFF;
+    border: 1px solid #333333;
+}
