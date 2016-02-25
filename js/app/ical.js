@@ -15,8 +15,8 @@ Requires([], function(){
      * 
      * @returns ext.contexthelpers.Users
      */
-    shs.iCal = function(TimeInput){
-        this.iCalConstructor(TimeInput);
+    shs.iCal = function(config, TimeInput){
+        this.iCalConstructor(config, TimeInput);
     }
     
     //extends from ...
@@ -25,34 +25,60 @@ Requires([], function(){
     //constructor declaration
     shs.iCal.prototype.constructor = shs.iCal;
     
+    //static methods
+    shs.iCal.prettyDate = function(jCalDate){
+        return jCalDate.toJSDate().toLocaleTimeString("en-us", {
+            weekday: "long", 
+            year: "numeric", 
+            month: "short",
+            day: "numeric", 
+            hour: "2-digit", 
+            minute: "2-digit"
+        });
+    }
+    
     //members
+    shs.iCal.prototype.renderTarget = null;
+    shs.iCal.prototype.config = null;
     shs.iCal.prototype.file = null;
     shs.iCal.prototype.fileContents = null;
     shs.iCal.prototype.events = null;
     shs.iCal.prototype.current = 0;
     shs.iCal.prototype.timeInput = null;
+    shs.iCal.prototype.play = false;
+    shs.iCal.prototype.autoProgressChecker = null;
     
     /**
      * Constructor:  because of the way JavaScript works(or doesn't) the actual constructor code for the class
      * is stored here.  This function should get called once, in the class-named function, after all super 
      * constructor calls.
      */
-    shs.iCal.prototype.iCalConstructor = function(TimeInput){
+    shs.iCal.prototype.iCalConstructor = function(config, TimeInput){
         this.timeInput = TimeInput;
+        this.config = config;
     }
     
     shs.iCal.prototype.render = function(selector){
+        if (!selector) {
+            selector = this.renderTarget;
+        } else {
+            this.renderTarget = selector;
+        }
+        
         jQuery(selector).html(
-                  "<div class='shs-col shs-col1'>"
-                + " <div style='margin:6px'>"
-                + "  <h4 style='margin:0 4px 0;display:inline-block;'>Import: </h4>"
-                + "  <input type='file' class='shs-uploadfile' />"
-                + "  <div class='shs-import shs-button'>Next</div>"
-                + "  <div class='shs-view shs-button'>View</div>"
-                + " </div>"
-                + " <div class='shs-icalContents'></div>"
-                + " <div class='shs-icalImportAddRow'></div>"
-                + "</div>"
+                "<div class='shs-col'>"
+              + " <div style='margin:6px'>"
+              + "  <h4 style='margin:0 4px 0;display:inline-block;'>Import: </h4>"
+              + "  <input type='file' class='shs-uploadfile' />"
+              + "  <div class='shs-play shs-button"+(this.play ? " shs-active" : "")+"'>"+(this.play ? "Pause" : "Play")+"</div>"
+              + "  <span> | </span>"
+              + "  <div class='shs-previous shs-button'>Previous</div>"
+              + "  <div class='shs-send shs-button'>Send</div>"
+              + "  <div class='shs-next shs-button'>Next</div>"
+              + " </div>"
+              + " <div class='shs-icalContents'></div>"
+              + " <div class='shs-icalImportAddRow'></div>"
+              + "</div>"
         );
 
         this.drawiCalTable(selector+' .shs-icalContents');
@@ -145,32 +171,42 @@ Requires([], function(){
                         });
                     }
                 }
+                
+                self.events.sort(function(a,b){
+                    return a.date.compare(b.date);
+                });
+                
+                self.render(selector);
             };
             reader.readAsText(self.file);
         });
-        jQuery(selector+' .shs-import').on('click', function(){
-            self.current++;
-            TimeDay.addEditRow(jQuery('.timedayAddRow')[0], "new");
-            self.timeInput.setupRowInputInteractions();
-            self.setupAutoProgress();
-
-            var cEvent = self.events[self.current];
-            jQuery('input[name="timedayDate"]').val(simpleDateString(cEvent.date.toJSDate()));
-            jQuery('input.timehours_input').click().val(cEvent.duration).blur();
-            jQuery('input.timedayDescInput').click().val(cEvent.description).trigger('keydown');
+        
+        jQuery(selector+' .shs-next').on('click', function(){
+            self.nextEvent();
             self.drawiCalTable(selector+' .shs-icalContents');
         });
-        jQuery(selector+' .shs-view').on('click', function(){
+        
+        jQuery(selector+' .shs-previous').on('click', function(){
+            self.prevEvent();
             self.drawiCalTable(selector+' .shs-icalContents');
+        });
+        
+        jQuery(selector+' .shs-play').on('click', function(){
+            self.play = !self.play;
+            self.setupAutoProgress();
+            self.render(selector);
+        });
+        
+        jQuery(selector+' .shs-send').on('click', function(){
+            self.sendCurrent();
         });
     }
     
     shs.iCal.prototype.drawiCalTable = function(selector){
-        var html = '<table><tr><th>Id</th><th>Date</th><th>Hours</th><th>Description</th></tr>';
+        var html = '<table><tr><th>Date</th><th>Hours</th><th>Description</th></tr>';
         for(var index in this.events){
             html += '<tr eventindex="'+index+'">';
-            html += '<td>'+index+'</td>';
-            html += '<td>'+this.events[index].date+'</td>';
+            html += '<td>'+shs.iCal.prettyDate(this.events[index].date)+'</td>';
             html += '<td>'+this.events[index].duration+'</td>';
             html += '<td>'+this.events[index].description+'</td>';
             html += '</tr>';
@@ -178,10 +214,71 @@ Requires([], function(){
         html += '</table>';
         jQuery(selector).html(html);
         jQuery(selector+' tr[eventindex='+this.current+']').addClass('shs-icalCurrentRow');
+        
+        var self = this;
+        jQuery(selector+' tr[eventindex]').on('click', function(e){
+            var newIndex = parseInt(jQuery(this).attr('eventindex'), 10);
+            self.current = newIndex;
+            self.drawiCalTable(selector);
+        });
     }
     
     shs.iCal.prototype.setupAutoProgress = function(){
-        //todo detect submit completion and update
+        if (!this.autoProgressChecker && this.play) {
+            var self = this;
+            this.autoProgressChecker = window.setInterval(function(){ 
+                if (jQuery('.timedaySectionBody  button.save').length == 0) {
+                    if (self.nextEvent()) {
+                        self.sendCurrent();
+                    } else {
+                        self.play = false;
+                        window.clearInterval(self.autoProgressChecker);
+                        self.autoProgressChecker = null;
+                    }
+                    self.render();
+                }
+            }, 800);
+        } else if (this.autoProgressChecker && !this.play) {
+            window.clearInterval(this.autoProgressChecker);
+            this.autoProgressChecker = null;
+        }
+    }
+    
+    shs.iCal.prototype.sendCurrent = function(){
+        TimeDay.addEditRow(jQuery('.timedayAddRow')[0], "new");
+        this.timeInput.setupRowInputInteractions();
+
+        var cEvent = this.events[this.current];
+        
+        //turn the first word into a hashtag if appropraite
+        if (this.config.data.iCal.attemptFirstWordHashtag) {
+            var firstWord = cEvent.description.split(" ")[0];
+            if (this.config.data.autocomplete && this.config.data.autocomplete.list && this.config.data.autocomplete.list[firstWord]) {
+                cEvent.description = "#"+cEvent.description;
+            }
+        }
+        
+        jQuery('input[name="timedayDate"]').val(simpleDateString(cEvent.date.toJSDate()));
+        jQuery('input.timehours_input').click().val(cEvent.duration).attr('priority', 200).blur();
+        jQuery('input.timedayDescInput').click().val(cEvent.description).trigger('keydown');
+    }
+    
+    shs.iCal.prototype.nextEvent = function(){
+        this.current++;
+        if (this.current >= this.events.length) {
+            this.current = this.events.length - 1;
+            return false;
+        }
+        return true;
+    }
+    
+    shs.iCal.prototype.prevEvent = function(){
+        this.current--;
+        if (this.current < 0) {
+            this.current = 0;
+            return false;
+        }
+        return true;
     }
     
     shs.iCal.prototype.toString = function(){

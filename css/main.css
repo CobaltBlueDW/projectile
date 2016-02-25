@@ -95,7 +95,7 @@ option[save="0"]:hover{
     display: inline-block;
     cursor: pointer;
 }
-.shs-button:hover {
+.shs-button:hover, .shs-button.shs-active {
     border-color: #FFFFFF;
 }
 
@@ -137,7 +137,19 @@ option[save="0"]:hover{
     box-sizing: border-box;
     resize: both;
 }
-.shs-icalCurrentRow{
+.shs-icalContents * {
+    padding: 4px;
+}
+.shs-icalContents tr:nth-child(odd) {
+   background-color: #E6F0FA;
+}
+.shs-icalContents td {
+    border-left: 1px solid #fff;
+    min-width: 8ex;
+    cursor: pointer;
+}
+.shs-icalContents tr.shs-icalCurrentRow {
     background: none repeat scroll 0 0 #F9FDFF;
-    border: 1px solid #333333;
+    border-bottom: 1px solid #333333;
+    border-right: 1px solid #333333;
 }

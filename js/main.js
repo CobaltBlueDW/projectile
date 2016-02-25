@@ -55,7 +55,7 @@ Requires(['shs.Config', 'jsOverlay.HUD', 'jsOverlay.Tab', 'shs.TagManager', 'shs
         this.timeInput = new shs.TimeInput(this.config);
         
         //load ical
-        this.iCal = new shs.iCal(this.timeInput);
+        this.iCal = new shs.iCal(this.config, this.timeInput);
         
         //load print
         this.print = new shs.Print();
