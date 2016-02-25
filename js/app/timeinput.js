@@ -159,7 +159,6 @@ Requires(['util', 'shs.HashTag'], function(){
     shs.TimeInput.prototype.setupDescriptionInteractions = function(selector){
         if (!selector) selector = this.renderTarget;
         var self = this;
-        
         jQuery(selector+' .timedayDescInput').autocomplete({
             delay: 500,
             minLength: 3,
@@ -194,6 +193,13 @@ Requires(['util', 'shs.HashTag'], function(){
 
                 //prevent default behavior
                 return false;
+            },
+            response: function(e, ui){
+                if (self.config.data.autocomplete.singleOptionAutoSelect && ui && ui.content && ui.content.length == 1) {
+                    ui.item = ui.content[0];
+                    jQuery(this).data('ui-autocomplete')._trigger('select', 'autocompleteselect', ui);
+                    jQuery(this).autocomplete('close');
+                }
             }
         });
     }

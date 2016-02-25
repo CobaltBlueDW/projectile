@@ -51,13 +51,14 @@ Requires(['shs.Config', 'jsOverlay.HUD', 'jsOverlay.Tab', 'shs.TagManager', 'shs
         //load #tags
         this.tagManager = new shs.TagManager(this.config);
         
+        //create input manager
+        this.timeInput = new shs.TimeInput(this.config);
+        
         //load ical
-        this.iCal = new shs.iCal();
+        this.iCal = new shs.iCal(this.config, this.timeInput);
         
         //load print
         this.print = new shs.Print();
-        
-        this.timeInput = new shs.TimeInput(this.config);
         
         //load display
         this.display = new jsOverlay.HUD('body');

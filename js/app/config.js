@@ -44,11 +44,11 @@ Requires([], function(){
     shs.Config.prototype.getDefaultSettings = function(){
         return {
             projList: {
-                "Admin Activities": true,
-                "Payroll Related": true,
+                "857889,1,1": "   Admin Activities",
+                "1499496,1,1": "   Developers"
             },
             taskList:{
-                "Administrative": true
+                "192419": "Emails & Meetings"
             },
             menu: {
                 startCollapsed: true
@@ -56,17 +56,22 @@ Requires([], function(){
             autocomplete: {
                 list: {
                     email: {
-                        label: "email",
-                        value: "email",
-                        revenueStream: "   Admin Activities",
-                        task: "Emails"
+                        label: "email/hipchat/JIRA/etc.",
+                        value: "email/hipchat/JIRA/etc.",
+                        task: "192419",
+                        hours: 0.25,
+                        project: "1499496,1,1"
                     }
-                }
+                },
+                singleOptionAutoSelect: true
+            },
+            iCal:{
+                attemptFirstWordHashtag: true
             },
             record: true,
             hideUnused: false,
             autoFillTask: true,
-            autoFillProject: true
+            autoFillProject: true,
         };
     }
     
@@ -121,12 +126,14 @@ Requires([], function(){
         
         var self = this;
         jQuery(selector+' .shs-remoteSave').on('click', function(){
+            //todo fix save bug
             var temp = JSON.parse(jQuery(selector+' .shs-configList').val());
             self.data = temp;
             self.setRemoteSettings();
             self.render();
         });
         jQuery(selector+' .shs-remoteLoad').on('click', function(){
+            //todo fix load bug
             self.getRemoteSettings(self.render, self, selector);
         });
     }

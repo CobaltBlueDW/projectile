@@ -39,12 +39,17 @@ Requires([], function(){
     
     shs.Print.prototype.render = function(selector){
         jQuery(selector).html(
-                "<div>"
-                + "nothing to see here"
-                + "</div>"
+              "<div class='shs-col'>"
+            + " <div style='margin:6px'>"
+            + "  <div class='shs-print shs-button'>Print Now</div>"
+            + " </div>"
+            + "</div>"
         );
         
-        this.promptPrint();
+        var self = this;
+        jQuery(selector+' .shs-print').on('click', function(e){
+            self.promptPrint();
+        });
     }
     
     shs.Print.prototype.promptPrint = function(){
