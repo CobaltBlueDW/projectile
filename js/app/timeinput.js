@@ -396,9 +396,11 @@ Requires(['util', 'shs.HashTag'], function(){
         
         var priority = this.returnPriority(this.hoursPriority);
         if(priority && priority.priority > 0){
-            hoursField.attr('priority', priority.priority);
-            hoursField.val(priority.input);
-        }else{
+            if ( hoursField.attr('priority') == undefined || priority.priority > hoursField.attr('priority') ) {
+                hoursField.attr('priority', priority.priority);
+                hoursField.val(priority.input);
+            }
+        } else {
             hoursField.val(0);
         }
     }
