@@ -160,7 +160,7 @@ Requires(['util', 'shs.HashTag'], function(){
         if (!selector) selector = this.renderTarget;
         var self = this;
         jQuery(selector+' .timedayDescInput').autocomplete({
-            delay: 500,
+            delay: 200,
             minLength: 3,
             source: this.createDescriptionDD.bind(this),
             select: function(e, ui){
@@ -395,12 +395,12 @@ Requires(['util', 'shs.HashTag'], function(){
         if (!(hoursField.length > 0)) return;
         
         var priority = this.returnPriority(this.hoursPriority);
-        if(priority && priority.priority > 0){
+        if (priority && priority.priority > 0) {
             if ( hoursField.attr('priority') == undefined || priority.priority > hoursField.attr('priority') ) {
                 hoursField.attr('priority', priority.priority);
                 hoursField.val(priority.input);
             }
-        } else {
+        } else if ( hoursField.attr('priority') == undefined ) {
             hoursField.val(0);
         }
     }

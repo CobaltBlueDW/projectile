@@ -237,7 +237,7 @@ Requires([], function(){
                     }
                     self.render();
                 }
-            }, 800);
+            }, 200);
         } else if (this.autoProgressChecker && !this.play) {
             window.clearInterval(this.autoProgressChecker);
             this.autoProgressChecker = null;
@@ -246,6 +246,7 @@ Requires([], function(){
     
     shs.iCal.prototype.sendCurrent = function(){
         TimeDay.addEditRow(jQuery('.timedayAddRow')[0], "new");
+        this.timeInput.resetPriorities();
         this.timeInput.setupRowInputInteractions();
 
         var cEvent = this.events[this.current];
@@ -261,6 +262,7 @@ Requires([], function(){
         jQuery('input[name="timedayDate"]').val(simpleDateString(cEvent.date.toJSDate()));
         jQuery('input.timehours_input').click().val(cEvent.duration).attr('priority', 200).blur();
         jQuery('input.timedayDescInput').click().val(cEvent.description).trigger('keydown');
+        jQuery('input.timehours_input').focus();
     }
     
     shs.iCal.prototype.nextEvent = function(){
