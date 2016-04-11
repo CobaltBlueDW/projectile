@@ -102,6 +102,12 @@ class ScrapeJIRA extends Service{
         if (count($page->find('#resolution-val')) > 0){
             $ticket->resolution = trim($page->find('#resolution-val', 0)->plaintext);
         }
+        if (count($page->find('#customfield_10620-val')) > 0) {
+            $ticket->revenueStream = trim($page->find('#customfield_10620-val', 0)->plaintext);
+            if (stripos($ticket->revenueStream, ": ") !== false) {
+                $ticket->revenueStream = substr($ticket->revenueStream, stripos($ticket->revenueStream, ": ")+2);
+            }
+        }
         
         //  Handle empty page
         // this selector doesn't work for some reason:  title:contains("Issue Does Not Exist")
