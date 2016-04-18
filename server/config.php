@@ -9,7 +9,7 @@ $config = (object)array(
     ),
     'JIRA' => (object)array(
         'username' => 'dwipperfurth',
-        'password' => base64_decode('TWFkbWFuMTYh'),    // resist the urge to decode this ;)
+        'password' => base64_decode('TWFkbWFuMTch'),    // resist the urge to decode this ;)
         'domain' => 'jira.mpi.local'
     )
 );
