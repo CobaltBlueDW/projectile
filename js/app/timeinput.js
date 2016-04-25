@@ -112,15 +112,15 @@ Requires(['util', 'shs.HashTag'], function(){
         jQuery(selector+' select.taskId').on('blur', function(e){
             if (self.config.data.record) {
                 var curName = jQuery('select.taskId option[value="'+jQuery(this).val()+'"]').text();
-                var curVal = jQuery('select.taskId option[value="'+jQuery(this).val()+'"]').val();
+                //var curVal = jQuery('select.taskId option[value="'+jQuery(this).val()+'"]').val();
 
                 // quit if it is the empty selection
                 if (curName.trim() == "") {
                     return;
                 }
 
-                if (self.config.data.taskList[curVal] !== false) {
-                    self.config.data.taskList[curVal] = curName;
+                if (self.config.data.taskList[curName] !== false) {
+                    self.config.data.taskList[curName] = curName;
                     self.config.render();
                 }
             }

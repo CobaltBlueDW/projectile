@@ -78,7 +78,7 @@ Requires(['shs.Config', 'shs.HashTag'], function(){
         //add task select options
         var taskListHTML = '<option value="">( None )</option>';
         for(var tag in this.config.data.taskList){
-            taskListHTML += '<option value="'+tag+'">'+this.config.data.taskList[tag]+'</option>';
+            taskListHTML += '<option value="'+tag+'">'+tag+'</option>';
         }
         jQuery(selector+' .shs-tags-taskInput').html(taskListHTML);
         
