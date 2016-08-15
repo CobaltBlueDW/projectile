@@ -47,6 +47,7 @@ Requires([], function(){
     shs.iCal.prototype.timeInput = null;
     shs.iCal.prototype.play = false;
     shs.iCal.prototype.autoProgressChecker = null;
+    shs.iCal.prototype.details = null;
     
     /**
      * Constructor:  because of the way JavaScript works(or doesn't) the actual constructor code for the class
@@ -79,9 +80,15 @@ Requires([], function(){
               + " <div class='shs-icalContents'></div>"
               + " <div class='shs-icalImportAddRow'></div>"
               + "</div>"
+              + "<div class='shs-col'>"
+              + "<h4>Details:</h4>"
+              + "<div><span>Records:</span><span class='shs-ical-reccount'></span></div>"
+              + "<div><span>Time:</span><span class='shs-ical-timesum'></span></div>"
+              + "</div>"
         );
 
         this.drawiCalTable(selector+' .shs-icalContents');
+        this.drawiCalDetails(selector);
         
         var self = this;
         jQuery(selector+' .shs-uploadfile').on('change', function(e){
@@ -241,6 +248,25 @@ Requires([], function(){
         } else if (this.autoProgressChecker && !this.play) {
             window.clearInterval(this.autoProgressChecker);
             this.autoProgressChecker = null;
+        }
+    }
+    
+    shs.iCal.prototype.drawiCalDetails = function(selector){
+        this.calculateDetails();
+        jQuery(selector+' .shs-ical-reccount').text(this.details.reccount);
+        jQuery(selector+' .shs-ical-timesum').text(this.details.timesum);
+    }
+    
+    shs.iCal.prototype.calculateDetails = function(){
+        if (!this.details) {
+            this.details = {
+                reccount: 0,
+                timesum: 0
+            };
+        }
+        for(var index in this.events){
+            this.details.reccount++;
+            this.details.timesum += this.events[index].duration;
         }
     }
     
