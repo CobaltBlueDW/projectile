@@ -264,6 +264,11 @@ Requires([], function(){
                 timesum: 0
             };
         }
+        
+        //reset all stats
+        this.details.reccount = 0;
+        this.details.timesum = 0;
+        
         for(var index in this.events){
             this.details.reccount++;
             this.details.timesum += this.events[index].duration;

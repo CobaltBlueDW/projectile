@@ -133,7 +133,8 @@ Requires(['util', 'shs.HashTag'], function(){
         jQuery(selector+' button.save').on('click', (function(e, ui){
             //grab submit data
             var submitData = {
-                projID: jQuery('select.projId').val(),
+                //projID: jQuery('select.projId').val(),
+                projID: jQuery('select.projId option[value="'+jQuery('select.projId').val()+'"]').text(),
                 taskID: jQuery('select.taskId option[value="'+jQuery('select.taskId').val()+'"]').text(),
                 hours: jQuery('input.timehours_input').val(),
                 date: jQuery('input.date').val(),
@@ -228,11 +229,16 @@ Requires(['util', 'shs.HashTag'], function(){
                 success: function(data, textStatus, jqXHR){
                     var tickets = jqXHR.responseJSON;
                     for(var i=0; i < tickets.length; i++){
+                        var description = tickets[i].projectName+'-'+tickets[i].ticketNumber+':  '+tickets[i].description;
+                        if (tickets[i].revenueStream) {
+                            description += " ["+tickets[i].revenueStream+"]";
+                        }
+                        description = description.replace(/[^a-zA-Z0-9\,\.\_\-\+\= \:\\\/\!\@\#\$\%\^\&\*\(\)\<\>\;\[\]\{\}]/g, "");
                         tickets[i] = new shs.HashTag(
                                 {
                                     tag: tickets[i].projectName+'-'+tickets[i].ticketNumber,
                                     label: tickets[i].projectName+'-'+tickets[i].ticketNumber+':  '+tickets[i].description,
-                                    value: tickets[i].projectName+'-'+tickets[i].ticketNumber+':  '+tickets[i].description
+                                    value: description
                                 },
                                 tickets[i]
                         );
